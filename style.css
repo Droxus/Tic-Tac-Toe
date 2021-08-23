@@ -1,3 +1,8 @@
 body {
     background-image: url(https://kartinkin.com/uploads/posts/2021-07/thumbs/1626169693_26-kartinkin-com-p-tetradnii-list-v-kletku-fon-krasivo-27.jpg) ;
 }
+.cell {
+    height: 30%;
+    width: 30%;
+    border: red 1px solid;
+}
