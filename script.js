@@ -1,41 +1,74 @@
 const elements = document.querySelectorAll('img')
 console.log(elements[0])
+let fillCellsCounter = 0
+function clearAllCells() {
+    isXturn = true
+    fillCellsCounter = 0
+    for (const element of elements){
+        element.removeAttribute('alt')
+        element.removeAttribute('src')
+    }
+}
+const anounceWinner = function(element) {
+
+        if (element.complete) {
+
+            alert("Winner " + element.alt + "!")
+  
+        }
+        function imageonload(e) {
+            alert("Winner " + element.alt + "!")
+            element.removeEventListener('load', imageonload)
+        }
+        element.addEventListener('load', imageonload)
+       
+
+
+}
 const onclicklistner = (e) => {
+    if (e.target.src !== '') return
     e.target.setAttribute('src', isXturn ? imgX : imgO)
     e.target.setAttribute('alt', isXturn ? 'X' : 'O')
     isXturn = !isXturn
-    e.target.removeEventListener('click', onclicklistner)
-    checkWinner()
+    fillCellsCounter++
+    checkWinner(e)
 
 }
-function checkWinner() {
-    for (let i=0; i<9; i+=3) {
-        const a = elements[i+1].alt !== '' &&
-        elements[i].alt===elements[i+1].alt &&
-        elements[i+1].alt===elements[i+2].alt
+function checkWinner(e) {
+    for (let i = 0; i < 9; i += 3) {
+        const a = elements[i + 1].alt !== '' &&
+            elements[i].alt === elements[i + 1].alt &&
+            elements[i + 1].alt === elements[i + 2].alt
         console.log(a)
-       if (a) {
-            alert("Winner " + elements[i].alt + "!")
+        if (a) {
+            anounceWinner(e.target)
+            clearAllCells()
+
         }
-    
+
     }
-    for (let i=0; i<3; i++) {
-        const b = elements[i+3].alt !== '' &&
-        elements[i].alt===elements[i+3].alt &&
-        elements[i+3].alt===elements[i+6].alt
+    for (let i = 0; i < 3; i++) {
+        const b = elements[i + 3].alt !== '' &&
+            elements[i].alt === elements[i + 3].alt &&
+            elements[i + 3].alt === elements[i + 6].alt
         console.log(b)
-       if (b) {
-            alert("Winner " + elements[i].alt + "!")
+        if (b) {
+            anounceWinner(e.target)
+            clearAllCells()
         }
     }
-    if ( elements[4].alt !== '' &&
-        (elements[2].alt===elements[4].alt &&
-        elements[4].alt===elements[6].alt || 
-        elements[0].alt===elements[4].alt &&
-        elements[4].alt===elements[8].alt))
-        {
-            alert("Winner " + elements[4].alt + "!")    
-        }
+    if (elements[4].alt !== '' &&
+        (elements[2].alt === elements[4].alt &&
+            elements[4].alt === elements[6].alt ||
+            elements[0].alt === elements[4].alt &&
+            elements[4].alt === elements[8].alt)) {
+                anounceWinner(e.target)
+                clearAllCells()
+    }
+     if (fillCellsCounter > 8) {
+         alert("Draw")
+         clearAllCells()
+     }
 }
 let isXturn = true
 const imgX = 'https://www.pngitem.com/pimgs/m/72-726040_cross-brush-png-wrong-red-cross-png-transparent.png'
