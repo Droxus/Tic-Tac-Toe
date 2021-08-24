@@ -71,7 +71,7 @@ function checkWinner(e) {
      }
 }
 let isXturn = true
-const imgX = 'https://www.pngitem.com/pimgs/m/72-726040_cross-brush-png-wrong-red-cross-png-transparent.png'
+const imgX = 'https://www.pngkit.com/png/full/205-2056204_tic-tac-toe-x-tic-tac-toe-x.png'
 const imgO = 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Red_circle.svg/1200px-Red_circle.svg.png'
 for (let index = 0; index < elements.length; index++) {
     const element = elements[index];
