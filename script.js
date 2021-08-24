@@ -1,5 +1,4 @@
 const elements = document.querySelectorAll('img')
-console.log(elements[0])
 let fillCellsCounter = 0
 function clearAllCells() {
     isXturn = true
@@ -9,12 +8,12 @@ function clearAllCells() {
         element.removeAttribute('src')
     }
 }
-const anounceWinner = function(element) {
+function anounceWinner(element) {
 
         if (element.complete) {
 
             alert("Winner " + element.alt + "!")
-  
+            return
         }
         function imageonload(e) {
             alert("Winner " + element.alt + "!")
@@ -39,7 +38,6 @@ function checkWinner(e) {
         const a = elements[i + 1].alt !== '' &&
             elements[i].alt === elements[i + 1].alt &&
             elements[i + 1].alt === elements[i + 2].alt
-        console.log(a)
         if (a) {
             anounceWinner(e.target)
             clearAllCells()
@@ -51,7 +49,6 @@ function checkWinner(e) {
         const b = elements[i + 3].alt !== '' &&
             elements[i].alt === elements[i + 3].alt &&
             elements[i + 3].alt === elements[i + 6].alt
-        console.log(b)
         if (b) {
             anounceWinner(e.target)
             clearAllCells()
@@ -66,8 +63,8 @@ function checkWinner(e) {
                 clearAllCells()
     }
      if (fillCellsCounter > 8) {
-         alert("Draw")
          clearAllCells()
+         alert("Draw")
      }
 }
 let isXturn = true
