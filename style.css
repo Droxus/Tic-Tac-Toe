@@ -1,6 +1,6 @@
 :root {
     --grid-border-color: red;
-    --grid-border-width: 1px;
+    --grid-border-width: 10px;
     --bg-grid-lines-color: lightblue;
     --bg-grid-lines-width: 20px;
 }
@@ -19,7 +19,7 @@ body {
     grid-template-columns: repeat(3, calc(100% / 3));
     grid-template-rows: repeat(3, calc(100% / 3));
 }
-.cell {
+.cell { 
     display: inline-block;
     height: inherit;
     width: inherit;
@@ -39,4 +39,7 @@ body {
     border-bottom-color: var(--grid-border-color);
     border-bottom-width: var(--grid-border-width);
     border-bottom-style: solid;
+}
+svg {
+    
 }

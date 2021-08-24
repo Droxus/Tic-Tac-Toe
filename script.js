@@ -1,4 +1,4 @@
-const elements = document.querySelectorAll('img')
+
 let fillCellsCounter = 0
 function clearAllCells() {
     isXturn = true
@@ -8,7 +8,7 @@ function clearAllCells() {
         element.removeAttribute('src')
     }
 }
-function anounceWinner(element) {
+function anounceWinner(element) { 
 
         if (element.complete) {
 
@@ -25,8 +25,9 @@ function anounceWinner(element) {
 
 }
 const onclicklistner = (e) => {
-    if (e.target.src !== '') return
-    e.target.setAttribute('src', isXturn ? imgX : imgO)
+    let cross  = e.target.getElementsByTagName('use'); console.log(e)
+    if (cross[0].href !== '') return
+    cross[0].setAttribute('href', isXturn ? '#Cross' : 'Circle')  //src
     e.target.setAttribute('alt', isXturn ? 'X' : 'O')
     isXturn = !isXturn
     fillCellsCounter++
@@ -67,11 +68,17 @@ function checkWinner(e) {
          alert("Draw")
      }
 }
+
+const elements = document.getElementsByClassName('cell') //img
+// const cross = elements.getElementsByTagName('use')
+// const circle = elements.getElementsByTagName('circle')
+
 let isXturn = true
-const imgX = 'https://www.pngkit.com/png/full/205-2056204_tic-tac-toe-x-tic-tac-toe-x.png'
-const imgO = 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Red_circle.svg/1200px-Red_circle.svg.png'
+// const imgX = 'https://www.pngkit.com/png/full/205-2056204_tic-tac-toe-x-tic-tac-toe-x.png'
+// const imgO = 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Red_circle.svg/1200px-Red_circle.svg.png'
+
 for (let index = 0; index < elements.length; index++) {
     const element = elements[index];
     element.addEventListener('click', onclicklistner)
 
-}
+} 

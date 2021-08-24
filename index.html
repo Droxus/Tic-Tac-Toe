@@ -1,14 +1,17 @@
 <html lang="en">
+
 <head>
     <link rel="stylesheet" href="style.css">
-    
+
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tic Tac Toe</title>
 </head>
+
 <body>
     <div class="grid">
+        <!-- <img class="cell">
         <img class="cell">
         <img class="cell">
         <img class="cell">
@@ -16,9 +19,58 @@
         <img class="cell">
         <img class="cell">
         <img class="cell">
-        <img class="cell">
-        <img class="cell">        
+        <img class="cell"> -->
+        <svg  class="cell" id="0"> 
+            <!-- visibility="hidden" or "visible" -->
+            <use></use>  
+        </svg>
+        <svg class="cell" id="1">
+            
+            <use href="#Cross"   visibility="hidden"></use>
+            <circle cx="100" cy="100" r="90" fill="transparent" stroke-width="10" stroke="red" visibility="hidden"/>
+        </svg>
+        <svg class="cell" id="2">
+            <use href="#Cross"   visibility="hidden"></use>
+            <circle cx="100" cy="100" r="90" fill="transparent" stroke-width="10" stroke="red" visibility="hidden"/>
+        </svg>
+        <svg class="cell" id="3"> 
+            <use href="#Cross"   visibility="hidden"></use>
+            <circle cx="100" cy="100" r="90" fill="transparent" stroke-width="10" stroke="red" visibility="hidden"/>
+        </svg>
+        <svg class="cell" id="4">
+            <use href="#Cross"   visibility="hidden"></use>
+            <circle cx="100" cy="100" r="90" fill="transparent" stroke-width="10" stroke="red" visibility="hidden"/>
+        </svg>
+        <svg class="cell" id="5">
+            <use href="#Cross"   visibility="hidden"></use>
+            <circle cx="100" cy="100" r="90" fill="transparent" stroke-width="10" stroke="red" visibility="hidden"/>
+        </svg>
+        <svg class="cell" id="6"> 
+            <use href="#Cross"   visibility="hidden"></use>
+            <circle cx="100" cy="100" r="90" fill="transparent" stroke-width="10" stroke="red" visibility="hidden"/>
+        </svg>
+        <svg class="cell" id="7">
+            <use href="#Cross"   visibility="hidden"></use>
+            <circle cx="100" cy="100" r="90" fill="transparent" stroke-width="10" stroke="red" visibility="hidden"/>
+        </svg>
+        <svg class="cell" id="8">
+            <use href="#Cross"   visibility="hidden"></use>
+            <circle cx="100" cy="100" r="90" fill="transparent" stroke-width="10" stroke="red" visibility="hidden"/>
+        </svg>
+
     </div>
+    <svg visibility="hidden" width="200" height="200">
+        <g id="Cross">            
+            <line x1="0" x2="200" y1="0" y2="200" stroke="blue" stroke-width="10" />
+            <line x1="0" x2="200" y1="200" y2="0" stroke="blue" stroke-width="10" />               
+        </g>
+        <circle id="Circle" cx="100" cy="100" r="90" fill="transparent" stroke-width="10" stroke="red" visibility="hidden"/>
+    </svg>
+
+
+
+
+
     <script src="script.js"></script>
 </body>
 </html>
