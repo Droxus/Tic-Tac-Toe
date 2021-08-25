@@ -11,8 +11,8 @@ function onClick(event) {
     hrefValue = isXturn ? '#cross' : '#circle';
     use.setAttribute('href', hrefValue);
     fillCellsCounter++
-    checkWinner()
     isXturn = !isXturn
+    checkWinner()
 }
 
 function checkWinner() {
@@ -62,7 +62,7 @@ function clearAllCells() {
 }
 
 function anounceWinner() { 
-    alert("Winner " + (isXturn ? 'X' : 'O') + "!")
+    alert("Winner " + (!isXturn ? 'X' : 'O') + "!")
 }
 
 const cells = Array.from(document.getElementsByClassName('cell'));
