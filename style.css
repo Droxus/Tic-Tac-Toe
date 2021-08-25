@@ -44,3 +44,15 @@ body {
     border-bottom-width: var(--grid-border-width);
     border-bottom-style: solid;
 }
+/* .cell use {
+    stroke-dasharray: 1000;
+    animation: stroke 3s ease-out forwards;
+}
+@keyframes stroke {
+    from {
+        stroke-dashoffset: 1000;
+    }
+    to {
+        stroke-dashoffset: 0;
+    }
+} */

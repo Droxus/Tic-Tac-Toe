@@ -10,6 +10,16 @@ function onClick(event) {
     if (hasElementBeenAlreadyUsed) return
     hrefValue = isXturn ? '#cross' : '#circle';
     use.setAttribute('href', hrefValue);
+    use.animate([
+        {strokeDashoffset: 1000},
+        {strokeDashoffset: 0}
+    ], {
+        duration: isXturn ? 2000 : 1500,
+        easing: 'ease-out',
+        fill: 'forwards'     
+    })
+    use.style.strokeDasharray = 1000
+
     fillCellsCounter++
     isXturn = !isXturn
     checkWinner()
