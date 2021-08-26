@@ -44,6 +44,9 @@ body {
     border-bottom-width: var(--grid-border-width);
     border-bottom-style: solid;
 }
+#stackLine {
+        
+}
 /* .cell use {
     stroke-dasharray: 1000;
     animation: stroke 3s ease-out forwards;
