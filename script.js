@@ -31,8 +31,20 @@ function checkWinner() {
             uses[i].getAttribute('href') === uses[i + 1].getAttribute('href') &&
             uses[i + 1].getAttribute('href') === uses[i + 2].getAttribute('href')
         if (isColumnSet) {
-            anounceWinner()
-            clearAllCells()
+            const cellBoundingClientRect = uses[i].parentNode.getBoundingClientRect();
+            const gridBoundingClientRect = uses[i].parentNode.parentNode.getBoundingClientRect();
+            const svg = document.getElementById('secondary');
+            const line = document.getElementById('strikethrough');
+            // line.setAttribute('x1', '0');
+            // line.setAttribute('y1', '0');
+            line.setAttribute('x2', '100%');
+            line.setAttribute('y2', '0');
+            svg.style.top = cellBoundingClientRect.top + cellBoundingClientRect.height / 2;
+            svg.style.left = cellBoundingClientRect.left;
+            svg.style.height = '5%';
+            svg.style.width = gridBoundingClientRect.width;
+            svg.style.display = 'block';
+            finish()
             return
         }
 
@@ -42,25 +54,47 @@ function checkWinner() {
             uses[i].getAttribute('href') === uses[i + 3].getAttribute('href') &&
             uses[i + 3].getAttribute('href') === uses[i + 6].getAttribute('href')
         if (isRowSet) {
-            anounceWinner()
-            clearAllCells()
+            const cellBoundingClientRect = uses[i].parentNode.getBoundingClientRect();
+            const gridBoundingClientRect = uses[i].parentNode.parentNode.getBoundingClientRect();
+            const svg = document.getElementById('secondary');
+            const line = document.getElementById('strikethrough');
+            // line.setAttribute('x1', '0');
+            // line.setAttribute('y1', '0');
+            line.setAttribute('x2', '0');
+            line.setAttribute('y2', '100%');
+            // line.setAttribute('stroke', 'black');
+            // line.setAttribute('stroke-width', '2%');
+            svg.style.top = cellBoundingClientRect.top;
+            svg.style.left = cellBoundingClientRect.left + cellBoundingClientRect.width / 2;
+            svg.style.height = gridBoundingClientRect.height;
+            svg.style.width = '5%';
+            svg.style.display = 'block';
+            finish()
             return
         }
     }
-    if (uses[4].getAttribute('href') &&
-        (uses[2].getAttribute('href') === uses[4].getAttribute('href') &&
-            uses[4].getAttribute('href') === uses[6].getAttribute('href') ||
-            uses[0].getAttribute('href') === uses[4].getAttribute('href') &&
-            uses[4].getAttribute('href') === uses[8].getAttribute('href'))) {
-                anounceWinner()
-                clearAllCells()
-                return
+
+    if (!uses[4].getAttribute('href')) { return }
+
+    if (uses[2].getAttribute('href') === uses[4].getAttribute('href') &&
+        uses[4].getAttribute('href') === uses[6].getAttribute('href')) {
+        finish()
+        return
     }
-     if (fillCellsCounter > 8) {
-         clearAllCells()
-         alert("Draw")
-         return
-     }
+    if (uses[0].getAttribute('href') === uses[4].getAttribute('href') &&
+        uses[4].getAttribute('href') === uses[8].getAttribute('href')) {
+        finish()
+        return
+    }
+
+    if (fillCellsCounter > 8) finish();
+}
+
+function finish() {
+    setTimeout(() => {
+        anounceWinner();
+        clearAllCells();
+    }, 1000)
 }
 
 function clearAllCells() {
@@ -69,10 +103,13 @@ function clearAllCells() {
     for (const use of uses){
         use.removeAttribute('href')
     }
+    const svg = document.getElementById('secondary');
+    svg.style.display = 'none';
+    svg.removeChild(svg.firstChild);
 }
 
-function anounceWinner() { 
-    alert("Winner " + (!isXturn ? 'X' : 'O') + "!")
+function anounceWinner() {
+    fillCellsCounter < 9 ? alert("Winner " + (!isXturn ? 'X' : 'O') + "!") : alert("Draw");
 }
 
 const cells = Array.from(document.getElementsByClassName('cell'));
