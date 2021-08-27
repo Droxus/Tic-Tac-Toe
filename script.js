@@ -1,9 +1,9 @@
 
 let fillCellsCounter, isXturn, TimeOutId;
-const grid = document.getElementsByClassName('grid')[0];
-const svgStrikethrough = document.getElementById('strikethrough');
+const grid = document.getElementById('grid');
 const cells = Array.from(document.getElementsByClassName('cell'));
 const uses = cells.map((cell) => cell.firstElementChild);
+const svgStrikethrough = document.getElementById('strikethrough');
 
 reset();
 
