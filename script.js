@@ -111,14 +111,14 @@ function announceWinner() {
     setTimeout(() => {
         alert("Winner " + (!isXturn ? 'X' : 'O') + "!")
         clearAllCells();
-    }, animationMaxDuration)
+    }, 2000)
 }
 
 function announceDraw() {
     setTimeout(() => {
         alert("Draw");
         clearAllCells();
-    }, animationMaxDuration)
+    }, 2000)
 }
 
 function clearAllCells() {
