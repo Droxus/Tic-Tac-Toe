@@ -78,6 +78,8 @@ function checkWinner() {
 }
 
 function strikethrough(x1, y1, x2, y2, top, left, height, width) {
+    const isDiagonale = x1 !== x2 && y1 !== y2 
+
     const gridBoundingClientRect = grid.getBoundingClientRect();
     const svg = svgStrikethrough;
     let line = svg.firstElementChild;
@@ -90,7 +92,7 @@ function strikethrough(x1, y1, x2, y2, top, left, height, width) {
     line.setAttribute('x2', '' + x2);
     line.setAttribute('y2', '' + y2);
     line.setAttribute('stroke', 'black');
-    line.setAttribute('stroke-width', '2%');
+    line.setAttribute('stroke-width', isDiagonale ? '2%' : '5%');
     svg.style.top = top;
     svg.style.left = left;
     svg.style.height = height || gridBoundingClientRect.height;
@@ -101,7 +103,7 @@ function strikethrough(x1, y1, x2, y2, top, left, height, width) {
         {strokeDashoffset: 0}
     ], {
         duration: 1000,
-        easing: 'ease-out',
+        easing: 'linear',
         fill: 'forwards'     
     })
     line.style.strokeDasharray = 1000
@@ -109,14 +111,14 @@ function strikethrough(x1, y1, x2, y2, top, left, height, width) {
 
 function announceWinner() {
     setTimeout(() => {
-        alert("Winner " + (!isXturn ? 'X' : 'O') + "!")
+        console.log("Winner " + (!isXturn ? 'X' : 'O') + "!")
         clearAllCells();
     }, 2000)
 }
 
 function announceDraw() {
     setTimeout(() => {
-        alert("Draw");
+        console.log("Draw");
         clearAllCells();
     }, 2000)
 }
