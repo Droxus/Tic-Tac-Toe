@@ -27,49 +27,29 @@ function onClick(event) {
 
 function checkWinner() {
     for (let i = 0; i < 9; i += 3) {
-        const isColumnSet = uses[i + 1].getAttribute('href') &&
+        const isRowSet = uses[i + 1].getAttribute('href') &&
             uses[i].getAttribute('href') === uses[i + 1].getAttribute('href') &&
             uses[i + 1].getAttribute('href') === uses[i + 2].getAttribute('href')
-        if (isColumnSet) {
+        if (isRowSet) {
             const cellBoundingClientRect = uses[i].parentNode.getBoundingClientRect();
-            const gridBoundingClientRect = uses[i].parentNode.parentNode.getBoundingClientRect();
-            const svg = document.getElementById('secondary');
-            const line = document.getElementById('strikethrough');
-            // line.setAttribute('x1', '0');
-            // line.setAttribute('y1', '0');
-            line.setAttribute('x2', '100%');
-            line.setAttribute('y2', '0');
-            svg.style.top = cellBoundingClientRect.top + cellBoundingClientRect.height / 2;
-            svg.style.left = cellBoundingClientRect.left;
-            svg.style.height = '5%';
-            svg.style.width = gridBoundingClientRect.width;
-            svg.style.display = 'block';
-            finish()
+            const top = cellBoundingClientRect.top + cellBoundingClientRect.height / 2;
+            const left = cellBoundingClientRect.left;
+            strikethrough(0, 0, '100%', 0, top, left, '5%');
+            announceWinner()
             return
         }
 
     }
     for (let i = 0; i < 3; i++) {
-        const isRowSet = uses[i + 3].getAttribute('href') &&
+        const isColumnSet = uses[i + 3].getAttribute('href') &&
             uses[i].getAttribute('href') === uses[i + 3].getAttribute('href') &&
             uses[i + 3].getAttribute('href') === uses[i + 6].getAttribute('href')
-        if (isRowSet) {
+        if (isColumnSet) {
             const cellBoundingClientRect = uses[i].parentNode.getBoundingClientRect();
-            const gridBoundingClientRect = uses[i].parentNode.parentNode.getBoundingClientRect();
-            const svg = document.getElementById('secondary');
-            const line = document.getElementById('strikethrough');
-            // line.setAttribute('x1', '0');
-            // line.setAttribute('y1', '0');
-            line.setAttribute('x2', '0');
-            line.setAttribute('y2', '100%');
-            // line.setAttribute('stroke', 'black');
-            // line.setAttribute('stroke-width', '2%');
-            svg.style.top = cellBoundingClientRect.top;
-            svg.style.left = cellBoundingClientRect.left + cellBoundingClientRect.width / 2;
-            svg.style.height = gridBoundingClientRect.height;
-            svg.style.width = '5%';
-            svg.style.display = 'block';
-            finish()
+            const top = cellBoundingClientRect.top;
+            const left = cellBoundingClientRect.left + cellBoundingClientRect.width / 2;
+            strikethrough(0, 0, 0, '100%', top, left, undefined, '5%');
+            announceWinner()
             return
         }
     }
@@ -78,23 +58,67 @@ function checkWinner() {
 
     if (uses[2].getAttribute('href') === uses[4].getAttribute('href') &&
         uses[4].getAttribute('href') === uses[6].getAttribute('href')) {
-        finish()
+        const top = uses[2].parentNode.getBoundingClientRect().top;
+        const left = uses[6].parentNode.getBoundingClientRect().left;
+        strikethrough('100%', 0, 0, '100%', top, left);
+        announceWinner()
         return
     }
     if (uses[0].getAttribute('href') === uses[4].getAttribute('href') &&
         uses[4].getAttribute('href') === uses[8].getAttribute('href')) {
-        finish()
+        const cellBoundingClientRect = uses[0].parentNode.getBoundingClientRect();
+        const top = cellBoundingClientRect.top;
+        const left = cellBoundingClientRect.left;
+        strikethrough(0, 0, '100%', '100%', top, left);
+        announceWinner()
         return
     }
 
-    if (fillCellsCounter > 8) finish();
+    if (fillCellsCounter > 8) announceDraw();
 }
 
-function finish() {
+function strikethrough(x1, y1, x2, y2, top, left, height, width) {
+    const gridBoundingClientRect = grid.getBoundingClientRect();
+    const svg = svgStrikethrough;
+    let line = svg.firstElementChild;
+    if (!line) {
+        line = document.createElementNS('http://www.w3.org/2000/svg','line');
+        svg.appendChild(line);
+    }
+    line.setAttribute('x1', '' + x1);
+    line.setAttribute('y1', '' + y1);
+    line.setAttribute('x2', '' + x2);
+    line.setAttribute('y2', '' + y2);
+    line.setAttribute('stroke', 'black');
+    line.setAttribute('stroke-width', '2%');
+    svg.style.top = top;
+    svg.style.left = left;
+    svg.style.height = height || gridBoundingClientRect.height;
+    svg.style.width = width || gridBoundingClientRect.width;
+    svg.style.display = 'block';
+    line.animate([
+        {strokeDashoffset: 1000},
+        {strokeDashoffset: 0}
+    ], {
+        duration: 1000,
+        easing: 'ease-out',
+        fill: 'forwards'     
+    })
+    line.style.strokeDasharray = 1000
+}
+
+function announceWinner() {
     setTimeout(() => {
-        anounceWinner();
+        alert("Winner " + (!isXturn ? 'X' : 'O') + "!")
         clearAllCells();
-    }, 1000)
+    }, animationMaxDuration)
+}
+
+function announceDraw() {
+    setTimeout(() => {
+        alert("Draw");
+        clearAllCells();
+    }, animationMaxDuration)
 }
 
 function clearAllCells() {
@@ -103,15 +127,11 @@ function clearAllCells() {
     for (const use of uses){
         use.removeAttribute('href')
     }
-    const svg = document.getElementById('secondary');
-    svg.style.display = 'none';
-    svg.removeChild(svg.firstChild);
+    svgStrikethrough.style.display = 'none';
 }
 
-function anounceWinner() {
-    fillCellsCounter < 9 ? alert("Winner " + (!isXturn ? 'X' : 'O') + "!") : alert("Draw");
-}
-
+const grid = document.getElementsByClassName('grid')[0];
+const svgStrikethrough = document.getElementById('strikethrough');
 const cells = Array.from(document.getElementsByClassName('cell'));
 const uses = cells.map((cell) => cell.firstElementChild);
 
