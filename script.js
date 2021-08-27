@@ -134,14 +134,14 @@ function strikethrough(x1, y1, x2, y2, top, left, height, width) {
     svg.style.width = width || gridBoundingClientRect.width;
     svg.style.display = 'block';
     line.animate([
-        { strokeDashoffset: 1000 },
+        { strokeDashoffset: line.getTotalLength() },
         { strokeDashoffset: 0 }
     ], {
         duration: 1000,
         easing: 'linear',
         fill: 'forwards'
     });
-    line.style.strokeDasharray = 1000;
+    line.style.strokeDasharray = line.getTotalLength();
 }
 function announceWinner() {
     setTimeout(() => {
