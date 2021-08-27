@@ -1,15 +1,40 @@
 
 let fillCellsCounter = 0
 let isXturn = true
+let TimeOutId
+function drawElement(use) {
+    let hrefValue = use.getAttribute('href')
+    const hasElementBeenAlreadyUsed = !!hrefValue
+    if (hasElementBeenAlreadyUsed) return
+    hrefValue = isXturn ? '#cross' : '#circle'
+    use.setAttribute('href', hrefValue) 
+
+}
+function onEnter(event) {
+    clearTimeout(event.target.timeOutId)
+    event.target.timeOutId = setTimeout(() => {
+    const svg = event.target
+    const use = svg.firstElementChild   
+    
+    drawElement(use)
+    use.setAttribute('opacity', '0.3')
+}, 200)
+    
+}
+function onLeave(event) {
+    clearTimeout(event.target.timeOutId)
+    const svg = event.currentTarget
+    const use = svg.firstElementChild
+    use.removeAttribute('opacity')
+    use.removeAttribute('href')
+}
 
 function onClick(event) {
-    const svg = event.currentTarget;
-    const use = svg.firstElementChild;
-    let hrefValue = use.getAttribute('href');
-    const hasElementBeenAlreadyUsed = !!hrefValue;
-    if (hasElementBeenAlreadyUsed) return
-    hrefValue = isXturn ? '#cross' : '#circle';
-    use.setAttribute('href', hrefValue);
+    clearTimeout(event.target.timeOutId)
+    const svg = event.currentTarget
+    const use = svg.firstElementChild
+    drawElement(use)
+    use.setAttribute('opacity', '1')   
     use.animate([
         {strokeDashoffset: 1000},
         {strokeDashoffset: 0}
@@ -22,6 +47,9 @@ function onClick(event) {
 
     fillCellsCounter++
     isXturn = !isXturn
+    svg.removeEventListener('mouseenter', onEnter)
+    svg.removeEventListener('mouseleave', onLeave)  
+    svg.removeEventListener('click', onClick)  
     checkWinner()
 }
 
@@ -108,7 +136,6 @@ function strikethrough(x1, y1, x2, y2, top, left, height, width) {
     })
     line.style.strokeDasharray = 1000
 }
-
 function announceWinner() {
     setTimeout(() => {
         console.log("Winner " + (!isXturn ? 'X' : 'O') + "!")
@@ -126,10 +153,14 @@ function announceDraw() {
 function clearAllCells() {
     isXturn = true
     fillCellsCounter = 0
-    for (const use of uses){
-        use.removeAttribute('href')
-    }
     svgStrikethrough.style.display = 'none';
+    for (let index = 0; index < cells.length; index++) {
+        const cell = cells[index];
+        cell.addEventListener('click', onClick)
+        cell.addEventListener('mouseenter', onEnter)
+        cell.addEventListener('mouseleave', onLeave)
+        cell.firstElementChild.removeAttribute('href')
+    } 
 }
 
 const grid = document.getElementsByClassName('grid')[0];
@@ -140,5 +171,7 @@ const uses = cells.map((cell) => cell.firstElementChild);
 for (let index = 0; index < cells.length; index++) {
     const cell = cells[index];
     cell.addEventListener('click', onClick)
+    cell.addEventListener('mouseenter', onEnter)
+    cell.addEventListener('mouseleave', onLeave)
 
 } 
