@@ -70,7 +70,7 @@ function checkWinner() {
             const top = cellBoundingClientRect.top + cellBoundingClientRect.height / 2;
             const left = cellBoundingClientRect.left;
             strikethrough(0, 0, '100%', 0, top, left, '5%');
-            announceWinner();
+            announce("Winner " + (!isXturn ? 'X' : 'O') + "!");
             return;
         }
 
@@ -84,7 +84,7 @@ function checkWinner() {
             const top = cellBoundingClientRect.top;
             const left = cellBoundingClientRect.left + cellBoundingClientRect.width / 2;
             strikethrough(0, 0, 0, '100%', top, left, undefined, '5%');
-            announceWinner();
+            announce("Winner " + (!isXturn ? 'X' : 'O') + "!");
             return;
         }
     }
@@ -96,7 +96,7 @@ function checkWinner() {
         const top = uses[2].parentNode.getBoundingClientRect().top;
         const left = uses[6].parentNode.getBoundingClientRect().left;
         strikethrough('100%', 0, 0, '100%', top, left);
-        announceWinner();
+        announce("Winner " + (!isXturn ? 'X' : 'O') + "!");
         return;
     }
     if (uses[0].getAttribute('href') === uses[4].getAttribute('href') &&
@@ -105,11 +105,11 @@ function checkWinner() {
         const top = cellBoundingClientRect.top;
         const left = cellBoundingClientRect.left;
         strikethrough(0, 0, '100%', '100%', top, left);
-        announceWinner();
+        announce("Winner " + (!isXturn ? 'X' : 'O') + "!");
         return;
     }
 
-    if (fillCellsCounter > 8) announceDraw();
+    if (fillCellsCounter > 8) announce("Draw!");
 }
 
 function strikethrough(x1, y1, x2, y2, top, left, height, width) {
@@ -133,26 +133,20 @@ function strikethrough(x1, y1, x2, y2, top, left, height, width) {
     svg.style.height = height || gridBoundingClientRect.height;
     svg.style.width = width || gridBoundingClientRect.width;
     svg.style.display = 'block';
+    const lineLength = line.getTotalLength();
     line.animate([
-        { strokeDashoffset: line.getTotalLength() },
+        { strokeDashoffset: lineLength },
         { strokeDashoffset: 0 }
     ], {
         duration: 1000,
         easing: 'linear',
         fill: 'forwards'
     });
-    line.style.strokeDasharray = line.getTotalLength();
+    line.style.strokeDasharray = lineLength;
 }
-function announceWinner() {
+function announce(announcement) {
     setTimeout(() => {
-        console.log("Winner " + (!isXturn ? 'X' : 'O') + "!");
-        reset();
-    }, 2000);
-}
-
-function announceDraw() {
-    setTimeout(() => {
-        console.log("Draw");
+        console.log(announcement);
         reset();
     }, 2000);
 }
