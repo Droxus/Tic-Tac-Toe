@@ -4,25 +4,66 @@ const grid = document.getElementById('grid');
 const cells = Array.from(document.getElementsByClassName('cell'));
 const uses = cells.map((cell) => cell.firstElementChild);
 const svgStrikethrough = document.getElementById('strikethrough');
+const select = document.getElementsByName('gameMode')[0]
+let gameMode = 'value1'
+let isBotTurn = true
+reset()
+ 
 
-reset();
+function onSelect(event) {
+reset()
+gameMode = event.target.value
+gamemode()
+}
 
-function drawElement(use, opacity = '1') {
-    use.setAttribute('opacity', opacity);
+function gamemode() {
+    switch (gameMode) {
+        case 'value2': easyBot(); break;
+        case 'value3': break;
+        case 'value1': 
+        default: 
+}
+}
+
+
+select.addEventListener('input', onSelect);
+function easyBot() {
+    let randomNumber = Math.floor(Math.random()*9)
+    console.log(randomNumber)
+    drawElement(uses[randomNumber])
+    isBotTurn = !isBotTurn
+    }
+
+function drawIndecElement(use) {
+    use.setAttribute('opacity', '0.3');
     let hrefValue = use.getAttribute('href');
-    const hasElementBeenAlreadyUsed = !!hrefValue;
-    if (hasElementBeenAlreadyUsed) return;
+    hasElementBeenAlreadyUsed = !!hrefValue;
+    if (hasElementBeenAlreadyUsed) return
     hrefValue = isXturn ? '#cross' : '#circle';
     use.setAttribute('href', hrefValue);
 }
 
+function drawElement(use) {
+    use.setAttribute('opacity', '1');
+    let hrefValue = use.getAttribute('href');
+    const hasElementBeenAlreadyUsed = !hrefValue;
+    if (hasElementBeenAlreadyUsed && gameMode !== 'value1' && isBotTurn){
+        return gamemode()
+    } else if (hasElementBeenAlreadyUsed) {return}
+    hrefValue = isXturn ? '#cross' : '#circle';
+    use.setAttribute('href', hrefValue);
+    fillCellsCounter++;
+    isXturn = !isXturn;
+    checkWinner()
+}
+
 function onEnter(event) {
-    clearTimeout(event.target.timeOutId);
+    clearTimeout(event.target.timeOutId)
     event.target.timeOutId = setTimeout(() => {
-        const svg = event.target;
-        const use = svg.firstElementChild;
-        drawElement(use, '0.3');
-    }, 200);
+        const svg = event.target
+        const use = svg.firstElementChild
+        drawIndecElement(use)
+    }, 200)
 }
 
 function onLeave(event) {
@@ -34,16 +75,15 @@ function onLeave(event) {
 }
 
 function onClick(event) {
-    clearTimeout(event.target.timeOutId);
+    clearTimeout(event.target.timeOutId)
+    const svg = event.currentTarget
+    const use = svg.firstElementChild
 
-    const svg = event.currentTarget;
-    const use = svg.firstElementChild;
-
-    svg.removeEventListener('mouseenter', onEnter);
-    svg.removeEventListener('mouseleave', onLeave);
-    svg.removeEventListener('click', onClick);
-
+    svg.removeEventListener('mouseenter', onEnter)
+    svg.removeEventListener('mouseleave', onLeave)
+    svg.removeEventListener('click', onClick)
     drawElement(use);
+    console.log(uses[0])
 
     use.animate([
         { strokeDashoffset: 1000 },
@@ -55,9 +95,8 @@ function onClick(event) {
     });
     use.style.strokeDasharray = 1000;
 
-    fillCellsCounter++;
-    isXturn = !isXturn;
-    checkWinner();
+
+    checkWinner()
 }
 
 function checkWinner() {
@@ -110,6 +149,7 @@ function checkWinner() {
     }
 
     if (fillCellsCounter > 8) announce("Draw!");
+    if (gameMode !== 'value1') return gamemode()
 }
 
 function strikethrough(x1, y1, x2, y2, top, left, height, width) {
@@ -126,7 +166,7 @@ function strikethrough(x1, y1, x2, y2, top, left, height, width) {
     line.setAttribute('y1', '' + y1);
     line.setAttribute('x2', '' + x2);
     line.setAttribute('y2', '' + y2);
-    line.setAttribute('stroke', 'black');
+    line.setAttribute('stroke', isXturn ? 'red' : 'blue');
     line.setAttribute('stroke-width', isDiagonale ? '2%' : '5%');
     svg.style.top = top;
     svg.style.left = left;
@@ -161,5 +201,6 @@ function reset() {
         cell.addEventListener('mouseenter', onEnter);
         cell.addEventListener('mouseleave', onLeave);
         cell.firstElementChild.removeAttribute('href');
+
     }
 }
