@@ -27,20 +27,44 @@ html, body {
 }
 
 #grid {
+    position: relative;
     width: var(--grid-size);
     height: var(--grid-size);
     display: grid;
     grid-template-columns: repeat(3, calc(var(--grid-size) / 3));
     grid-template-rows: repeat(3, calc(var(--grid-size) / 3));
+    gap: var(--grid-lines-width);
+}
 
+#grid::before {
+    z-index: -1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    content: " ";
     background-size: var(--grid-lines-size) var(--grid-lines-size);
     background-image:
         linear-gradient(to bottom, transparent var(--grid-cell-size-vp), red var(--grid-lines-width)),
         linear-gradient(to right, transparent var(--grid-cell-size-vp), red var(--grid-lines-width));
-}
+    background-position: top left;
+    animation: gridWipe 1s linear;
+  }
+  
+  @keyframes gridWipe {
+    0% {
+      width: 0px;
+      height: 0px;
+    }
+    100% {
+      width: 100%;
+      height: 100%;
+    }
+  }
 
 .cell {
-    box-sizing: border-box;
     display: block;
     height: var(--grid-cell-size);
     width: var(--grid-cell-size);
