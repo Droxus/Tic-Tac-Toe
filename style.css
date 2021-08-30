@@ -1,10 +1,12 @@
 :root {
     --grid-size: 80vmin;
     --grid-cell-size: 100%;
+    --grid-cell-size-vp: calc(var(--grid-size) / 3);
     --grid-lines-color: red;
     --grid-lines-width: 1vmin;
     --bg-grid-lines-color: lightblue;
     --bg-grid-lines-width: 20px;
+    --grid-lines-size: calc(var(--grid-cell-size-vp) + var(--grid-lines-width));
 }
 
 html, body {
@@ -30,6 +32,11 @@ html, body {
     display: grid;
     grid-template-columns: repeat(3, calc(var(--grid-size) / 3));
     grid-template-rows: repeat(3, calc(var(--grid-size) / 3));
+
+    background-size: var(--grid-lines-size) var(--grid-lines-size);
+    background-image:
+        linear-gradient(to bottom, transparent var(--grid-cell-size-vp), red var(--grid-lines-width)),
+        linear-gradient(to right, transparent var(--grid-cell-size-vp), red var(--grid-lines-width));
 }
 
 .cell {
@@ -37,22 +44,4 @@ html, body {
     display: block;
     height: var(--grid-cell-size);
     width: var(--grid-cell-size);
-}
-
-.cell:nth-child(3n+2) {
-    border-left-color: var(--grid-lines-color);
-    border-left-width: var(--grid-lines-width);
-    border-left-style: solid;
-    border-right-color: var(--grid-lines-color);
-    border-right-width: var(--grid-lines-width);
-    border-right-style: solid;
-}
-
-.cell:nth-child(n+4):nth-child(-n+6) {
-    border-top-color: var(--grid-lines-color);
-    border-top-width: var(--grid-lines-width);
-    border-top-style: solid;
-    border-bottom-color: var(--grid-lines-color);
-    border-bottom-width: var(--grid-lines-width);
-    border-bottom-style: solid;
 }
