@@ -6,14 +6,14 @@ const uses = cells.map((cell) => cell.firstElementChild);
 const svgStrikethrough = document.getElementById('strikethrough');
 const select = document.getElementsByName('gameMode')[0]
 let gameMode = 'value1'
-let isBotTurn = true
+let isBotTurn = false
 reset()
  
 
 function onSelect(event) {
 reset()
 gameMode = event.target.value
-gamemode()
+console.log(gameMode)
 }
 
 function gamemode() {
@@ -25,35 +25,25 @@ function gamemode() {
 }
 }
 
-
 select.addEventListener('input', onSelect);
 function easyBot() {
+    if (!isXturn) {
     let randomNumber = Math.floor(Math.random()*9)
     console.log(randomNumber)
-    drawElement(uses[randomNumber])
-    isBotTurn = !isBotTurn
+    let use = uses[randomNumber]
+    drawElement(use, '1')
+    console.log(use.opacity)
+    isXturn = !isXturn
     }
-
-function drawIndecElement(use) {
-    use.setAttribute('opacity', '0.3');
-    let hrefValue = use.getAttribute('href');
-    hasElementBeenAlreadyUsed = !!hrefValue;
-    if (hasElementBeenAlreadyUsed) return
-    hrefValue = isXturn ? '#cross' : '#circle';
-    use.setAttribute('href', hrefValue);
 }
 
-function drawElement(use) {
-    use.setAttribute('opacity', '1');
+function drawElement(use, opacity= '1') {
+    use.setAttribute('opacity', opacity);
     let hrefValue = use.getAttribute('href');
-    const hasElementBeenAlreadyUsed = !hrefValue;
-    if (hasElementBeenAlreadyUsed && gameMode !== 'value1' && isBotTurn){
-        return gamemode()
-    } else if (hasElementBeenAlreadyUsed) {return}
+    const hasElementBeenAlreadyUsed = !!hrefValue;
+    if (hasElementBeenAlreadyUsed) return;
     hrefValue = isXturn ? '#cross' : '#circle';
     use.setAttribute('href', hrefValue);
-    fillCellsCounter++;
-    isXturn = !isXturn;
     checkWinner()
 }
 
@@ -62,7 +52,7 @@ function onEnter(event) {
     event.target.timeOutId = setTimeout(() => {
         const svg = event.target
         const use = svg.firstElementChild
-        drawIndecElement(use)
+        drawElement(use, '0.3')
     }, 200)
 }
 
@@ -73,8 +63,7 @@ function onLeave(event) {
     use.removeAttribute('opacity');
     use.removeAttribute('href');
 }
-
-function onClick(event) {
+function onClick1(event) {
     clearTimeout(event.target.timeOutId)
     const svg = event.currentTarget
     const use = svg.firstElementChild
@@ -82,9 +71,8 @@ function onClick(event) {
     svg.removeEventListener('mouseenter', onEnter)
     svg.removeEventListener('mouseleave', onLeave)
     svg.removeEventListener('click', onClick)
-    drawElement(use);
-    console.log(uses[0])
-
+}
+function drawAnimate() {
     use.animate([
         { strokeDashoffset: 1000 },
         { strokeDashoffset: 0 }
@@ -94,8 +82,15 @@ function onClick(event) {
         fill: 'forwards'
     });
     use.style.strokeDasharray = 1000;
+}
 
-
+function onClick(event) {
+    onClick1(event)
+    drawElement(use, '1');
+    drawAnimate()
+    fillCellsCounter++
+    isXturn = !isXturn
+    gamemode()
     checkWinner()
 }
 
@@ -149,7 +144,6 @@ function checkWinner() {
     }
 
     if (fillCellsCounter > 8) announce("Draw!");
-    if (gameMode !== 'value1') return gamemode()
 }
 
 function strikethrough(x1, y1, x2, y2, top, left, height, width) {
