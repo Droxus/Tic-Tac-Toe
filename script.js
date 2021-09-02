@@ -1,5 +1,5 @@
 
-let fillCellsCounter, isXturn, TimeOutId, gameMode;
+let fillCellsCounter, isXturn, TimeOutId, gameMode, isBotTurn, finished;
 const grid = document.getElementById('grid');
 const cells = Array.from(document.getElementsByClassName('cell'));
 const uses = cells.map((cell) => cell.firstElementChild);
@@ -13,31 +13,31 @@ const MODE = {
 };
 
 // ========================= Setup =========================
-reset();
-
 select.addEventListener('input', onSelect);
 for (let index = 0; index < cells.length; index++) {
     const cell = cells[index];
-    const use = cell.firstElementChild;
-    use.locked = false;
     cell.addEventListener('click', onClick);
     cell.addEventListener('mouseenter', onEnter);
     cell.addEventListener('mouseleave', onLeave);
 }
+
+reset();
+if ((gameMode === MODE.BOT_EASY || gameMode === MODE.BOT_HARD) && isBotTurn) { makeBotMove(); changeTurn(); }
 // =========================================================
 
 // ==================== Event Listeners ====================
 function onSelect(event) {
     reset();
+    if ((gameMode === MODE.BOT_EASY || gameMode === MODE.BOT_HARD) && isBotTurn) { makeBotMove(); changeTurn(); }
 }
 
 function onEnter(event) {
-    const svg = event.target;
+    const svg = event.currentTarget;
     clearTimeout(svg.timeOutId);
     const use = svg.firstElementChild;
     if (isSvgLocked(use)) { return; }
     svg.timeOutId = setTimeout(() => {
-        drawSvg(use, '0.3');
+        drawSvg(use, 0.3, false);
     }, 200);
 }
 
@@ -61,18 +61,24 @@ function onClick(event) {
 
 // ========================= Moves =========================
 function changeTurn() {
+    if (finished) { return; }
     fillCellsCounter++;
     isXturn = !isXturn;
     checkWinner();
+    isBotTurn = !isBotTurn;
 }
 
 function makeMove(event) {
     switch (gameMode) {
         case MODE.BOT_EASY:
         case MODE.BOT_HARD: {
-            makePlayerMove(event);
-            changeTurn();
-            makeBotMove(event);
+            if (isBotTurn) {
+                makeBotMove();
+            } else {
+                makePlayerMove(event);
+                changeTurn();
+                makeBotMove();
+            }
         } break;
         default: {
             makePlayerMove(event);
@@ -84,19 +90,18 @@ function makeMove(event) {
 function makePlayerMove(event) {
     const svg = event.currentTarget;
     const use = svg.firstElementChild;
-    drawSvg(use, 1, true);
+    drawSvg(use);
     animateSvg(use, isXturn ? 2000 : 1500);
 }
 
-function makeBotMove(event) {
-    let locked = true;
-    for (let index = 0; locked && index < cells.length; index++, locked = isSvgLocked(randomUse)) {
-        const randomCellIndex = Math.floor(Math.random() * 9);
-        var randomUse = uses[randomCellIndex];
-    }
-    if (!randomUse) { return; }
-    drawSvg(randomUse, 1, true);
-    animateSvg(randomUse, isXturn ? 2000 : 1500);
+function makeBotMove() {
+    const unlockedUses = uses.filter(use => !isSvgLocked(use));
+    const randomUnlockedUseIndex = Math.floor(Math.random() * unlockedUses.length);
+    const randomUnlockedUse = unlockedUses[randomUnlockedUseIndex];
+    const isAnyRandomUnlockedUseLeft = !!randomUnlockedUse;
+    if (!isAnyRandomUnlockedUseLeft) { return; }
+    drawSvg(randomUnlockedUse);
+    animateSvg(randomUnlockedUse, isXturn ? 2000 : 1500);
 }
 
 function checkWinner() {
@@ -152,20 +157,26 @@ function checkWinner() {
 }
 
 function announce(announcement) {
+    finish();
     setTimeout(() => {
         console.log(announcement);
         reset();
+        if ((gameMode === MODE.BOT_EASY || gameMode === MODE.BOT_HARD) && isBotTurn) { makeBotMove(); changeTurn(); }
     }, 2000);
 }
 // =========================================================
 
 // ========================= Drawing =========================
-function isSvgLocked(element) {
-    return element.locked;
+function setSvgLocked(use, locked) {
+    use.locked = locked;
 }
 
-function drawSvg(use, opacity, locked = false) {
-    use.locked = locked;
+function isSvgLocked(use) {
+    return use.locked;
+}
+
+function drawSvg(use, opacity = 1, locked = true) {
+    setSvgLocked(use, locked);
     use.setAttribute('opacity', '' + opacity);
     const hrefValue = isXturn ? '#cross' : '#circle';
     use.setAttribute('href', hrefValue);
@@ -213,12 +224,19 @@ function reset() {
     isXturn = true;
     fillCellsCounter = 0;
     gameMode = select.value;
+    isBotTurn = Math.random() > 0.5;
     svgStrikethrough.style.display = 'none';
     for (let index = 0; index < cells.length; index++) {
         const cell = cells[index];
         const use = cell.firstElementChild;
-        use.locked = false;
+        finished = false;
+        setSvgLocked(use, false);
         use.removeAttribute('href');
         use.removeAttribute('opacity');
     }
+}
+
+function finish() {
+    finished = true;
+    uses.forEach(use => setSvgLocked(use, true));
 }
