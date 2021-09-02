@@ -6,14 +6,21 @@ const uses = cells.map((cell) => cell.firstElementChild);
 const svgStrikethrough = document.getElementById('strikethrough');
 const select = document.getElementsByName('gameMode')[0];
 const MODE = {
-    BOT_EASY: 'bot.easy',
-    BOT_HARD: 'bot.hard',
-    PVP_OFFLINE: 'pvp.offline',
-    PVP_ONLINE: 'pvp.online',
+    BOT_EASY: 'Easy bot',
+    BOT_HARD: 'Insane bot',
+    PVP_OFFLINE: 'Local PvP',
+    PVP_ONLINE: 'Online PvP',
 };
 
 // ========================= Setup =========================
+for (const mode in MODE) {
+    const option = document.createElement('option');
+    option.innerText = option.value = MODE[mode];
+    select.appendChild(option);
+}
+
 select.addEventListener('input', onSelect);
+
 for (let index = 0; index < cells.length; index++) {
     const cell = cells[index];
     cell.addEventListener('click', onClick);
@@ -22,13 +29,13 @@ for (let index = 0; index < cells.length; index++) {
 }
 
 reset();
-if ((gameMode === MODE.BOT_EASY || gameMode === MODE.BOT_HARD) && isBotTurn) { makeBotMove(); changeTurn(); }
+checkBotTurn();
 // =========================================================
 
 // ==================== Event Listeners ====================
 function onSelect(event) {
     reset();
-    if ((gameMode === MODE.BOT_EASY || gameMode === MODE.BOT_HARD) && isBotTurn) { makeBotMove(); changeTurn(); }
+    checkBotTurn();
 }
 
 function onEnter(event) {
@@ -60,6 +67,13 @@ function onClick(event) {
 // =========================================================
 
 // ========================= Moves =========================
+function checkBotTurn() {
+    const shouldBotMakeMove = (gameMode === MODE.BOT_EASY || gameMode === MODE.BOT_HARD) && isBotTurn;
+    if (!shouldBotMakeMove) { return; }
+    makeBotMove();
+    changeTurn();
+}
+
 function changeTurn() {
     if (finished) { return; }
     fillCellsCounter++;
@@ -161,7 +175,7 @@ function announce(announcement) {
     setTimeout(() => {
         console.log(announcement);
         reset();
-        if ((gameMode === MODE.BOT_EASY || gameMode === MODE.BOT_HARD) && isBotTurn) { makeBotMove(); changeTurn(); }
+        checkBotTurn();
     }, 2000);
 }
 // =========================================================
