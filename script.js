@@ -11,6 +11,8 @@ const MODE = {
     PVP_OFFLINE: 'Local PvP',
     PVP_ONLINE: 'Online PvP',
 };
+const modal = document.getElementById('modal');
+const modalContent = document.getElementById('modal-content');
 
 // ========================= Setup =========================
 for (const mode in MODE) {
@@ -18,6 +20,8 @@ for (const mode in MODE) {
     option.innerText = option.value = MODE[mode];
     select.appendChild(option);
 }
+
+window.onclick = onWindowClick;
 
 select.addEventListener('input', onSelect);
 
@@ -63,6 +67,10 @@ function onClick(event) {
     const use = svg.firstElementChild;
     if (isSvgLocked(use)) { return; }
     makeMove(event);
+}
+
+function onWindowClick(event) {
+    if (Array.from(modal.children).includes(event.target)) { hideModal(); }
 }
 // =========================================================
 
@@ -172,11 +180,21 @@ function checkWinner() {
 
 function announce(announcement) {
     finish();
+    showModal(announcement);
     setTimeout(() => {
-        console.log(announcement);
         reset();
         checkBotTurn();
+        hideModal();
     }, 2000);
+}
+
+function showModal(text) {
+    modalContent.innerText = text;
+    modal.style.display = 'block';
+}
+
+function hideModal() {
+    modal.style.display = 'none';
 }
 // =========================================================
 
