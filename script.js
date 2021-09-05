@@ -78,7 +78,7 @@ function onWindowClick(event) {
 function checkBotTurn() {
     const shouldBotMakeMove = (gameMode === MODE.BOT_EASY || gameMode === MODE.BOT_HARD) && isBotTurn;
     if (!shouldBotMakeMove) { return; }
-    makeBotMove();
+    makeEasyBotMove();
     changeTurn();
 }
 
@@ -92,14 +92,22 @@ function changeTurn() {
 
 function makeMove(event) {
     switch (gameMode) {
-        case MODE.BOT_EASY:
-        case MODE.BOT_HARD: {
+        case MODE.BOT_EASY: {
             if (isBotTurn) {
-                makeBotMove();
+                makeEasyBotMove();
             } else {
                 makePlayerMove(event);
                 changeTurn();
-                makeBotMove();
+                makeEasyBotMove();
+            }
+        } break;
+        case MODE.BOT_HARD: {
+            if (isBotTurn) {
+                makeHardBotMove();
+            } else {
+                makePlayerMove(event);
+                changeTurn();
+                makeHardBotMove();
             }
         } break;
         default: {
@@ -113,17 +121,74 @@ function makePlayerMove(event) {
     const svg = event.currentTarget;
     const use = svg.firstElementChild;
     drawSvg(use);
-    animateSvg(use, isXturn ? 2000 : 1500);
+    animateSvg(use);
 }
 
-function makeBotMove() {
+function makeEasyBotMove() {
     const unlockedUses = uses.filter(use => !isSvgLocked(use));
     const randomUnlockedUseIndex = Math.floor(Math.random() * unlockedUses.length);
     const randomUnlockedUse = unlockedUses[randomUnlockedUseIndex];
     const isAnyRandomUnlockedUseLeft = !!randomUnlockedUse;
     if (!isAnyRandomUnlockedUseLeft) { return; }
     drawSvg(randomUnlockedUse);
-    animateSvg(randomUnlockedUse, isXturn ? 2000 : 1500);
+    animateSvg(randomUnlockedUse);
+}
+function makeHardBotMove() {
+    const unlockedUses = uses.filter(use => !isSvgLocked(use));
+    for (let i = 0; i < 9; i += 3) {
+        if (isSvgLocked(uses[i + 1]) && uses[i].getAttribute('href') === uses[i + 1].getAttribute('href') && !isSvgLocked(uses[i + 2])) {
+            drawSvg(uses[i + 2]); animateSvg(uses[i + 2]); return;
+        }
+        if (isSvgLocked(uses[i + 1]) && uses[i + 1].getAttribute('href') === uses[i + 2].getAttribute('href') && !isSvgLocked(uses[i])) {
+            drawSvg(uses[i]); animateSvg(uses[i]); return;
+        }
+        if (isSvgLocked(uses[i]) && uses[i].getAttribute('href') === uses[i + 2].getAttribute('href') && !isSvgLocked(uses[i + 1])) {
+            drawSvg(uses[i + 1]); animateSvg(uses[i + 1]); return;
+        }
+    }
+    for (let i = 0; i < 3; i++) {
+        if (isSvgLocked(uses[i]) && uses[i].getAttribute('href') === uses[i + 3].getAttribute('href') && !isSvgLocked(uses[i + 6])) {
+            drawSvg(uses[i + 6]); animateSvg(uses[i + 6]); return;
+        }
+        if (isSvgLocked(uses[i]) && uses[i].getAttribute('href') === uses[i + 6].getAttribute('href') && !isSvgLocked(uses[i + 3])) {
+            drawSvg(uses[i + 3]); animateSvg(uses[i + 3]); return;
+        }
+        if (isSvgLocked(uses[i + 3]) && uses[i + 3].getAttribute('href') === uses[i + 6].getAttribute('href') && !isSvgLocked(uses[i])) {
+            drawSvg(uses[i]); animateSvg(uses[i]); return;
+        }
+    }
+    if (isSvgLocked(uses[2]) && uses[2].getAttribute('href') === uses[4].getAttribute('href') && !isSvgLocked(uses[6])) {
+        drawSvg(uses[6]); animateSvg(uses[6]); return;
+    }
+    if (isSvgLocked(uses[4]) && uses[4].getAttribute('href') === uses[6].getAttribute('href') && !isSvgLocked(uses[2])) {
+        drawSvg(uses[2]); animateSvg(uses[2]); return;
+    }
+    if (isSvgLocked(uses[6]) && uses[2].getAttribute('href') === uses[6].getAttribute('href') && !isSvgLocked(uses[4])) {
+        drawSvg(uses[4]); animateSvg(uses[4]); return;
+    }
+
+    if (isSvgLocked(uses[0]) && uses[0].getAttribute('href') === uses[4].getAttribute('href') && !isSvgLocked(uses[8])) {
+        drawSvg(uses[8]); animateSvg(uses[8]); return;
+    }
+    if (isSvgLocked(uses[4]) && uses[4].getAttribute('href') === uses[8].getAttribute('href') && !isSvgLocked(uses[0])) {
+        drawSvg(uses[0]); animateSvg(uses[0]); return;
+    }
+    if (isSvgLocked(uses[8]) && uses[0].getAttribute('href') === uses[8].getAttribute('href') && !isSvgLocked(uses[4])) {
+        drawSvg(uses[4]); animateSvg(uses[4]); return;
+    }
+    if (!isSvgLocked(uses[4])) { drawSvg(uses[4]); animateSvg(uses[4]); return }
+    if (!isSvgLocked(uses[0])) { drawSvg(uses[0]); animateSvg(uses[0]); return }
+    if (!isSvgLocked(uses[2])) { drawSvg(uses[2]); animateSvg(uses[2]); return }
+    if (!isSvgLocked(uses[6])) { drawSvg(uses[6]); animateSvg(uses[6]); return }
+    if (!isSvgLocked(uses[8])) { drawSvg(uses[8]); animateSvg(uses[8]); return }
+
+
+    const randomUnlockedUseIndex = Math.floor(Math.random() * unlockedUses.length);
+    const randomUnlockedUse = unlockedUses[randomUnlockedUseIndex];
+    const isAnyRandomUnlockedUseLeft = !!randomUnlockedUse;
+    if (!isAnyRandomUnlockedUseLeft) { return; }
+    drawSvg(randomUnlockedUse);
+    animateSvg(randomUnlockedUse);
 }
 
 function checkWinner() {
@@ -215,6 +280,7 @@ function drawSvg(use, opacity = 1, locked = true) {
 }
 
 function animateSvg(element, duration, strokeDashLength = 1000) {
+    duration = duration ? 1000 : (isXturn ? 2000 : 1500)
     element.style.strokeDasharray = strokeDashLength;
     element.animate([
         { strokeDashoffset: strokeDashLength },
@@ -256,7 +322,7 @@ function reset() {
     isXturn = true;
     fillCellsCounter = 0;
     gameMode = select.value;
-    isBotTurn = Math.random() > 0.5;
+    isBotTurn = false
     svgStrikethrough.style.display = 'none';
     for (let index = 0; index < cells.length; index++) {
         const cell = cells[index];
