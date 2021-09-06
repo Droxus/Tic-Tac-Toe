@@ -1,25 +1,35 @@
 
-let fillCellsCounter, isXturn, TimeOutId, gameMode, isBotTurn, returnCompleteLine, finished;
+
+
+
+
+
+let fillCellsCounter, isXturn, TimeOutId, gameMode, isBotTurn, returnCompleteLine,
+    finished, friendID, connection;
+
+    const button = document.getElementById('connect');
+    const input = document.getElementById('name');
 const grid = document.getElementById('grid');
 const cells = Array.from(document.getElementsByClassName('cell'));
 const uses = cells.map((cell) => cell.firstElementChild);
 const svgStrikethrough = document.getElementById('strikethrough');
 const select = document.getElementsByName('gameMode')[0];
 const MODE = {
+    PVP_ONLINE: 'Online PvP',
     BOT_EASY: 'Easy bot',
     BOT_HARD: 'Insane bot',
     PVP_OFFLINE: 'Local PvP',
-    PVP_ONLINE: 'Online PvP',
 };
 const modal = document.getElementById('modal');
 const modalContent = document.getElementById('modal-content');
-
+button.addEventListener('click', onConnection);
 // ========================= Setup =========================
 for (const mode in MODE) {
     const option = document.createElement('option');
     option.innerText = option.value = MODE[mode];
     select.appendChild(option);
 }
+
 
 window.onclick = onWindowClick;
 
@@ -34,12 +44,14 @@ for (let index = 0; index < cells.length; index++) {
 
 reset();
 checkBotTurn();
+checkOnlineMode()
 // =========================================================
 
 // ==================== Event Listeners ====================
 function onSelect(event) {
     reset();
     checkBotTurn();
+    checkOnlineMode()
 }
 
 function onEnter(event) {
@@ -81,7 +93,35 @@ function checkBotTurn() {
     makeEasyBotMove();
     changeTurn();
 }
+function checkOnlineMode() {
+    const isOnlineMode = gameMode === MODE.PVP_ONLINE
+    if (isOnlineMode) {
+        peer = new Peer()
+        peer.on('open', function (id) {
+            console.log('id: ' + id)
+        });
+        peer.on('connection', function (conn) {
+            connection = conn
+            connection.on('open', function () {
+                connection.on('data', function (index) {
+                    changeTurn()
+                    drawSvg(uses[index])
+                    animateSvg(uses[index])
 
+                })
+            })
+        })
+    }
+}
+function onConnection(event) {
+    friendID =  input.value
+    connection = peer.connect(friendID)
+    connection.on('open', function () {
+        connection.on('data', function (data) {
+
+        })
+    })
+}
 function changeTurn() {
     if (finished) { return; }
     fillCellsCounter++;
@@ -110,13 +150,23 @@ function makeMove(event) {
                 makeHardBotMove();
             }
         } break;
+        case MODE.PVP_ONLINE: {
+            makeOnlinePlayerMove(event)
+
+        } break;
         default: {
             makePlayerMove(event);
         }
     }
     changeTurn();
 }
+function makeOnlinePlayerMove(event) {
+    makePlayerMove(event)
+    const cell = event.currentTarget;
+    const index = cells.indexOf(cell)
+    connection.send(index)
 
+}
 function makePlayerMove(event) {
     const svg = event.currentTarget;
     const use = svg.firstElementChild;
@@ -240,6 +290,7 @@ function announce(announcement) {
     setTimeout(() => {
         reset();
         checkBotTurn();
+        checkOnlineMode()
         hideModal();
     }, 2000);
 }
