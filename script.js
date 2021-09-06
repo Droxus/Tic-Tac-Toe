@@ -1,5 +1,5 @@
 
-let fillCellsCounter, isXturn, TimeOutId, gameMode, isBotTurn, finished;
+let fillCellsCounter, isXturn, TimeOutId, gameMode, isBotTurn, returnCompleteLine, finished;
 const grid = document.getElementById('grid');
 const cells = Array.from(document.getElementsByClassName('cell'));
 const uses = cells.map((cell) => cell.firstElementChild);
@@ -133,55 +133,46 @@ function makeEasyBotMove() {
     drawSvg(randomUnlockedUse);
     animateSvg(randomUnlockedUse);
 }
+function completeLine(index1, index2, index3) {
+    if (isSvgLocked(uses[index1]) && uses[index1].getAttribute('href') === uses[index2].getAttribute('href')
+     && !isSvgLocked(uses[index3])) {
+        drawSvg(uses[index3]); animateSvg(uses[index3]); return returnCompleteLine = true;
+    }
+    return returnCompleteLine = false; 
+}
 function makeHardBotMove() {
     const unlockedUses = uses.filter(use => !isSvgLocked(use));
+    returnCompleteLine = false
     for (let i = 0; i < 9; i += 3) {
-        if (isSvgLocked(uses[i + 1]) && uses[i].getAttribute('href') === uses[i + 1].getAttribute('href') && !isSvgLocked(uses[i + 2])) {
-            drawSvg(uses[i + 2]); animateSvg(uses[i + 2]); return;
-        }
-        if (isSvgLocked(uses[i + 1]) && uses[i + 1].getAttribute('href') === uses[i + 2].getAttribute('href') && !isSvgLocked(uses[i])) {
-            drawSvg(uses[i]); animateSvg(uses[i]); return;
-        }
-        if (isSvgLocked(uses[i]) && uses[i].getAttribute('href') === uses[i + 2].getAttribute('href') && !isSvgLocked(uses[i + 1])) {
-            drawSvg(uses[i + 1]); animateSvg(uses[i + 1]); return;
-        }
+        completeLine(i + 1, i, i + 2); if (returnCompleteLine) {return}
+        completeLine(i + 1, i + 2, i); if (returnCompleteLine) {return}
+        completeLine(i, i + 2, i + 1); if (returnCompleteLine) {return}
     }
     for (let i = 0; i < 3; i++) {
-        if (isSvgLocked(uses[i]) && uses[i].getAttribute('href') === uses[i + 3].getAttribute('href') && !isSvgLocked(uses[i + 6])) {
-            drawSvg(uses[i + 6]); animateSvg(uses[i + 6]); return;
-        }
-        if (isSvgLocked(uses[i]) && uses[i].getAttribute('href') === uses[i + 6].getAttribute('href') && !isSvgLocked(uses[i + 3])) {
-            drawSvg(uses[i + 3]); animateSvg(uses[i + 3]); return;
-        }
-        if (isSvgLocked(uses[i + 3]) && uses[i + 3].getAttribute('href') === uses[i + 6].getAttribute('href') && !isSvgLocked(uses[i])) {
-            drawSvg(uses[i]); animateSvg(uses[i]); return;
-        }
+        completeLine(i, i + 3, i + 6); if (returnCompleteLine) {return}
+         completeLine(i, i + 6, i + 3); if (returnCompleteLine) {return}
+        completeLine(i + 3, i + 6, i); if (returnCompleteLine) {return}
     }
-    if (isSvgLocked(uses[2]) && uses[2].getAttribute('href') === uses[4].getAttribute('href') && !isSvgLocked(uses[6])) {
-        drawSvg(uses[6]); animateSvg(uses[6]); return;
-    }
-    if (isSvgLocked(uses[4]) && uses[4].getAttribute('href') === uses[6].getAttribute('href') && !isSvgLocked(uses[2])) {
-        drawSvg(uses[2]); animateSvg(uses[2]); return;
-    }
-    if (isSvgLocked(uses[6]) && uses[2].getAttribute('href') === uses[6].getAttribute('href') && !isSvgLocked(uses[4])) {
-        drawSvg(uses[4]); animateSvg(uses[4]); return;
-    }
+      completeLine(2, 4, 6); if (returnCompleteLine) {return}
+      completeLine(4, 6, 2); if (returnCompleteLine) {return}
+      completeLine(6, 2, 4); if (returnCompleteLine) {return}
 
-    if (isSvgLocked(uses[0]) && uses[0].getAttribute('href') === uses[4].getAttribute('href') && !isSvgLocked(uses[8])) {
-        drawSvg(uses[8]); animateSvg(uses[8]); return;
-    }
-    if (isSvgLocked(uses[4]) && uses[4].getAttribute('href') === uses[8].getAttribute('href') && !isSvgLocked(uses[0])) {
-        drawSvg(uses[0]); animateSvg(uses[0]); return;
-    }
-    if (isSvgLocked(uses[8]) && uses[0].getAttribute('href') === uses[8].getAttribute('href') && !isSvgLocked(uses[4])) {
-        drawSvg(uses[4]); animateSvg(uses[4]); return;
-    }
+      completeLine(0, 4, 8); if (returnCompleteLine) {return}
+      completeLine(4, 8, 0); if (returnCompleteLine) {return}
+      completeLine(8, 0, 4); if (returnCompleteLine) {return}
+
+
     if (!isSvgLocked(uses[4])) { drawSvg(uses[4]); animateSvg(uses[4]); return }
+    if (isSvgLocked(uses[4]) && isSvgLocked(uses[0]) || isSvgLocked(uses[2]) || isSvgLocked(uses[6]) || isSvgLocked(uses[8])){
+        if (!isSvgLocked(uses[1])) { drawSvg(uses[1]); animateSvg(uses[1]); return }
+        if (!isSvgLocked(uses[3])) { drawSvg(uses[3]); animateSvg(uses[3]); return }
+        if (!isSvgLocked(uses[5])) { drawSvg(uses[5]); animateSvg(uses[5]); return }
+        if (!isSvgLocked(uses[7])) { drawSvg(uses[7]); animateSvg(uses[7]); return }
+    }
     if (!isSvgLocked(uses[0])) { drawSvg(uses[0]); animateSvg(uses[0]); return }
     if (!isSvgLocked(uses[2])) { drawSvg(uses[2]); animateSvg(uses[2]); return }
     if (!isSvgLocked(uses[6])) { drawSvg(uses[6]); animateSvg(uses[6]); return }
     if (!isSvgLocked(uses[8])) { drawSvg(uses[8]); animateSvg(uses[8]); return }
-
 
     const randomUnlockedUseIndex = Math.floor(Math.random() * unlockedUses.length);
     const randomUnlockedUse = unlockedUses[randomUnlockedUseIndex];
