@@ -135,35 +135,35 @@ function makeEasyBotMove() {
 }
 function completeLine(index1, index2, index3) {
     if (isSvgLocked(uses[index1]) && uses[index1].getAttribute('href') === uses[index2].getAttribute('href')
-     && !isSvgLocked(uses[index3])) {
+        && !isSvgLocked(uses[index3])) {
         drawSvg(uses[index3]); animateSvg(uses[index3]); return returnCompleteLine = true;
     }
-    return returnCompleteLine = false; 
+    return returnCompleteLine = false;
 }
 function makeHardBotMove() {
     const unlockedUses = uses.filter(use => !isSvgLocked(use));
     returnCompleteLine = false
     for (let i = 0; i < 9; i += 3) {
-        completeLine(i + 1, i, i + 2); if (returnCompleteLine) {return}
-        completeLine(i + 1, i + 2, i); if (returnCompleteLine) {return}
-        completeLine(i, i + 2, i + 1); if (returnCompleteLine) {return}
+        completeLine(i + 1, i, i + 2); if (returnCompleteLine) { return }
+        completeLine(i + 1, i + 2, i); if (returnCompleteLine) { return }
+        completeLine(i, i + 2, i + 1); if (returnCompleteLine) { return }
     }
     for (let i = 0; i < 3; i++) {
-        completeLine(i, i + 3, i + 6); if (returnCompleteLine) {return}
-         completeLine(i, i + 6, i + 3); if (returnCompleteLine) {return}
-        completeLine(i + 3, i + 6, i); if (returnCompleteLine) {return}
+        completeLine(i, i + 3, i + 6); if (returnCompleteLine) { return }
+        completeLine(i, i + 6, i + 3); if (returnCompleteLine) { return }
+        completeLine(i + 3, i + 6, i); if (returnCompleteLine) { return }
     }
-      completeLine(2, 4, 6); if (returnCompleteLine) {return}
-      completeLine(4, 6, 2); if (returnCompleteLine) {return}
-      completeLine(6, 2, 4); if (returnCompleteLine) {return}
+    completeLine(2, 4, 6); if (returnCompleteLine) { return }
+    completeLine(4, 6, 2); if (returnCompleteLine) { return }
+    completeLine(6, 2, 4); if (returnCompleteLine) { return }
 
-      completeLine(0, 4, 8); if (returnCompleteLine) {return}
-      completeLine(4, 8, 0); if (returnCompleteLine) {return}
-      completeLine(8, 0, 4); if (returnCompleteLine) {return}
+    completeLine(0, 4, 8); if (returnCompleteLine) { return }
+    completeLine(4, 8, 0); if (returnCompleteLine) { return }
+    completeLine(8, 0, 4); if (returnCompleteLine) { return }
 
 
     if (!isSvgLocked(uses[4])) { drawSvg(uses[4]); animateSvg(uses[4]); return }
-    if (isSvgLocked(uses[4]) && isSvgLocked(uses[0]) || isSvgLocked(uses[2]) || isSvgLocked(uses[6]) || isSvgLocked(uses[8])){
+    if (isSvgLocked(uses[4]) && isSvgLocked(uses[0]) || isSvgLocked(uses[2]) || isSvgLocked(uses[6]) || isSvgLocked(uses[8])) {
         if (!isSvgLocked(uses[1])) { drawSvg(uses[1]); animateSvg(uses[1]); return }
         if (!isSvgLocked(uses[3])) { drawSvg(uses[3]); animateSvg(uses[3]); return }
         if (!isSvgLocked(uses[5])) { drawSvg(uses[5]); animateSvg(uses[5]); return }
