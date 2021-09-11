@@ -10,58 +10,61 @@
 </head>
 
 <body class="center grid-lines">
-    <div class="buttonPanel">
-        <button id="connect" type="button">
-            Press to connect
-        </button>
-        <label for="name">Your ID:</label>
-        <input type="text" id="myID" name="name">
-        <button id="copyID" type="button">
-            Copy My ID
-        </button>
-        <label for="name">Paste here ID:</label>
-        <input type="text" id="frndID" name="name"> 
-        <button id="pasteID" type="button">
-            Paste ID
-        </button>
+    <header>
         <select name="gameMode"></select>
         <button id="playAgain" type="button">
-            Play Again
+            Restart
         </button>
         <button id="switchTheme" type="button">
-            Switch Theme
+            Dark Theme
         </button>
-    </div>
-
-    <div id="grid">
-        <svg class="cell">
-            <use></use>
-        </svg>
-        <svg class="cell">
-            <use></use>
-        </svg>
-        <svg class="cell">
-            <use></use>
-        </svg>
-        <svg class="cell">
-            <use></use>
-        </svg>
-        <svg class="cell">
-            <use></use>
-        </svg>
-        <svg class="cell">
-            <use></use>
-        </svg>
-        <svg class="cell">
-            <use></use>
-        </svg>
-        <svg class="cell">
-            <use></use>
-        </svg>
-        <svg class="cell">
-            <use></use>
-        </svg>
-    </div>
+    </header>
+    <section id="online-controls" class="center">
+        <div>
+            <label for="name">My ID:</label>
+            <output type="text" id="myID" name="myId"></output>
+            <button id="copyID" type="button">Copy</button>
+        </div>
+        <div>
+            <label for="name">Friend's ID:</label>
+            <input type="text" id="friendId" name="name">
+            <button id="pasteID" type="button">Paste</button>
+        </div>
+        <div>
+            <button id="connect" type="button">Connect</button>
+        </div>
+    </section>
+    <main class="center">
+        <div id="grid">
+            <svg class="cell">
+                <use></use>
+            </svg>
+            <svg class="cell">
+                <use></use>
+            </svg>
+            <svg class="cell">
+                <use></use>
+            </svg>
+            <svg class="cell">
+                <use></use>
+            </svg>
+            <svg class="cell">
+                <use></use>
+            </svg>
+            <svg class="cell">
+                <use></use>
+            </svg>
+            <svg class="cell">
+                <use></use>
+            </svg>
+            <svg class="cell">
+                <use></use>
+            </svg>
+            <svg class="cell">
+                <use></use>
+            </svg>
+        </div>
+    </main>
     <svg id="strikethrough" style="display: none;position: absolute;"></svg>
     <svg style="display: none;">
         <defs>

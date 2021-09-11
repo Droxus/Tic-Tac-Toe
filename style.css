@@ -32,6 +32,28 @@ html, body {
     align-items: center;
 }
 
+.center-horizontally {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.space-between {
+  display: flex;
+  justify-content: space-between;
+}
+
+#online-controls {
+  margin: 10px;
+}
+
+#switchTheme {
+  position: absolute;
+  top: 1%;
+  right: 1%;
+}
+
 #grid {
     position: relative;
     width: var(--grid-size);
