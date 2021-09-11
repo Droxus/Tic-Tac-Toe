@@ -12,8 +12,9 @@ const select = document.getElementsByName('gameMode')[0];
 const buttonPressToCopyID = document.getElementById('copyID')
 const buttonPressToPlayAgain = document.getElementById('playAgain')
 const buttonPressToPasteID = document.getElementById('pasteID')
-const inputFrndID = document.getElementById('frndID')
+const inputFrndID = document.getElementById('friendId')
 const inputMyID = document.getElementById('myID')
+const buttonSwitchTheme = document.getElementById('switchTheme')
 const MODE = {
     PVP_ONLINE: 'Online PvP',
     BOT_EASY: 'Easy bot',
@@ -22,9 +23,10 @@ const MODE = {
 };
 const modal = document.getElementById('modal');
 const modalContent = document.getElementById('modal-content');
-buttonPressToCopyID.addEventListener('click', copyID, false)
-buttonPressToPlayAgain.addEventListener('click', playAgain, false)
-buttonPressToPasteID.addEventListener('click', pasteID, false)
+buttonSwitchTheme.addEventListener('click', SwitchTheme)
+buttonPressToCopyID.addEventListener('click', copyID)
+buttonPressToPlayAgain.addEventListener('click', playAgain)
+buttonPressToPasteID.addEventListener('click', pasteID)
 button.addEventListener('click', onConnection);
 // ========================= Setup =========================
 for (const mode in MODE) {
@@ -122,6 +124,9 @@ function onConnection(event) {
         connection.on('data', function (data) {
         })
     })
+}
+function SwitchTheme() {
+
 }
 function playAgain() {
     reset()
