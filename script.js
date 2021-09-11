@@ -2,14 +2,18 @@
 let fillCellsCounter, isXturn, TimeOutId, gameMode, isBotTurn, returnCompleteLine,
     finished, friendID, connection, myID
 
-    const button = document.getElementById('connect');
-    const input = document.getElementById('myID');
+const button = document.getElementById('connect');
+const input = document.getElementById('myID');
 const grid = document.getElementById('grid');
 const cells = Array.from(document.getElementsByClassName('cell'));
 const uses = cells.map((cell) => cell.firstElementChild);
 const svgStrikethrough = document.getElementById('strikethrough');
 const select = document.getElementsByName('gameMode')[0];
 const buttonPressToCopyID = document.getElementById('copyID')
+const buttonPressToPlayAgain = document.getElementById('playAgain')
+const buttonPressToPasteID = document.getElementById('pasteID')
+const inputFrndID = document.getElementById('frndID')
+const inputMyID = document.getElementById('myID')
 const MODE = {
     PVP_ONLINE: 'Online PvP',
     BOT_EASY: 'Easy bot',
@@ -19,6 +23,8 @@ const MODE = {
 const modal = document.getElementById('modal');
 const modalContent = document.getElementById('modal-content');
 buttonPressToCopyID.addEventListener('click', copyID, false)
+buttonPressToPlayAgain.addEventListener('click', playAgain, false)
+buttonPressToPasteID.addEventListener('click', pasteID, false)
 button.addEventListener('click', onConnection);
 // ========================= Setup =========================
 for (const mode in MODE) {
@@ -104,24 +110,33 @@ function checkOnlineMode() {
                     changeTurn()
                     drawSvg(uses[index])
                     animateSvg(uses[index])
-
                 })
             })
         })
     }
 }
 function onConnection(event) {
-    friendID =  input.value
+    friendID = input.value
     connection = peer.connect(friendID)
     connection.on('open', function () {
         connection.on('data', function (data) {
-
         })
     })
 }
+function playAgain() {
+    reset()
+}
+function pasteID() {
+    navigator.clipboard.readText().then(function (clipText) {
+        inputFrndID.value = clipText
+        console.log(clipText)
+    });
+}
+
 function copyID() {
-console.log('id: ' + myID)
-navigator.clipboard.writeText(myID).then(function() { })
+    navigator.clipboard.writeText(myID)
+    inputMyID.value = myID
+    console.log('id: ' + myID)
 }
 function changeTurn() {
     if (finished) { return; }
@@ -214,15 +229,15 @@ function makeHardBotMove() {
 
 
     if (!isSvgLocked(uses[4])) { drawSvg(uses[4]); animateSvg(uses[4]); return }
-    if (isSvgLocked(uses[4]) && uses[4].getAttribute('href') === '#cross' && isSvgLocked(uses[0]) || 
-    isSvgLocked(uses[2]) || isSvgLocked(uses[6]) || isSvgLocked(uses[8])) {
+    if (isSvgLocked(uses[4]) && uses[4].getAttribute('href') === '#cross' && isSvgLocked(uses[0]) ||
+        isSvgLocked(uses[2]) || isSvgLocked(uses[6]) || isSvgLocked(uses[8])) {
         if (!isSvgLocked(uses[0])) { drawSvg(uses[0]); animateSvg(uses[0]); return }
         if (!isSvgLocked(uses[2])) { drawSvg(uses[2]); animateSvg(uses[2]); return }
         if (!isSvgLocked(uses[6])) { drawSvg(uses[6]); animateSvg(uses[6]); return }
         if (!isSvgLocked(uses[8])) { drawSvg(uses[8]); animateSvg(uses[8]); return }
     }
-    if (isSvgLocked(uses[4]) && uses[4].getAttribute('href') === '#circle' && isSvgLocked(uses[0]) || 
-    isSvgLocked(uses[2]) || isSvgLocked(uses[6]) || isSvgLocked(uses[8])) {
+    if (isSvgLocked(uses[4]) && uses[4].getAttribute('href') === '#circle' && isSvgLocked(uses[0]) ||
+        isSvgLocked(uses[2]) || isSvgLocked(uses[6]) || isSvgLocked(uses[8])) {
         if (!isSvgLocked(uses[1])) { drawSvg(uses[1]); animateSvg(uses[1]); return }
         if (!isSvgLocked(uses[3])) { drawSvg(uses[3]); animateSvg(uses[3]); return }
         if (!isSvgLocked(uses[5])) { drawSvg(uses[5]); animateSvg(uses[5]); return }
@@ -371,7 +386,7 @@ function strikethrough(x1, y1, x2, y2, top, left, height, width) {
 }
 // =========================================================
 function copy(someString) {
-    
+
 }
 
 function reset() {
