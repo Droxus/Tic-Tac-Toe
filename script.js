@@ -1,11 +1,6 @@
 
-
-
-
-
-
 let fillCellsCounter, isXturn, TimeOutId, gameMode, isBotTurn, returnCompleteLine,
-    finished, friendID, connection;
+    finished, friendID, connection, myID
 
     const button = document.getElementById('connect');
     const input = document.getElementById('name');
@@ -14,6 +9,7 @@ const cells = Array.from(document.getElementsByClassName('cell'));
 const uses = cells.map((cell) => cell.firstElementChild);
 const svgStrikethrough = document.getElementById('strikethrough');
 const select = document.getElementsByName('gameMode')[0];
+const buttonPressToCopyID = document.getElementById('copyID')
 const MODE = {
     PVP_ONLINE: 'Online PvP',
     BOT_EASY: 'Easy bot',
@@ -22,6 +18,7 @@ const MODE = {
 };
 const modal = document.getElementById('modal');
 const modalContent = document.getElementById('modal-content');
+buttonPressToCopyID.addEventListener('click', copyID, false)
 button.addEventListener('click', onConnection);
 // ========================= Setup =========================
 for (const mode in MODE) {
@@ -98,7 +95,7 @@ function checkOnlineMode() {
     if (isOnlineMode) {
         peer = new Peer()
         peer.on('open', function (id) {
-            console.log('id: ' + id)
+            myID = id
         });
         peer.on('connection', function (conn) {
             connection = conn
@@ -121,6 +118,10 @@ function onConnection(event) {
 
         })
     })
+}
+function copyID() {
+console.log('id: ' + myID)
+navigator.clipboard.writeText(myID).then(function() {}
 }
 function changeTurn() {
     if (finished) { return; }
@@ -213,12 +214,22 @@ function makeHardBotMove() {
 
 
     if (!isSvgLocked(uses[4])) { drawSvg(uses[4]); animateSvg(uses[4]); return }
-    if (isSvgLocked(uses[4]) && isSvgLocked(uses[0]) || isSvgLocked(uses[2]) || isSvgLocked(uses[6]) || isSvgLocked(uses[8])) {
+    if (isSvgLocked(uses[4]) && uses[4].getAttribute('href') === '#cross' && isSvgLocked(uses[0]) || 
+    isSvgLocked(uses[2]) || isSvgLocked(uses[6]) || isSvgLocked(uses[8])) {
+        if (!isSvgLocked(uses[0])) { drawSvg(uses[0]); animateSvg(uses[0]); return }
+        if (!isSvgLocked(uses[2])) { drawSvg(uses[2]); animateSvg(uses[2]); return }
+        if (!isSvgLocked(uses[6])) { drawSvg(uses[6]); animateSvg(uses[6]); return }
+        if (!isSvgLocked(uses[8])) { drawSvg(uses[8]); animateSvg(uses[8]); return }
+    }
+    if (isSvgLocked(uses[4]) && uses[4].getAttribute('href') === '#circle' && isSvgLocked(uses[0]) || 
+    isSvgLocked(uses[2]) || isSvgLocked(uses[6]) || isSvgLocked(uses[8])) {
         if (!isSvgLocked(uses[1])) { drawSvg(uses[1]); animateSvg(uses[1]); return }
         if (!isSvgLocked(uses[3])) { drawSvg(uses[3]); animateSvg(uses[3]); return }
         if (!isSvgLocked(uses[5])) { drawSvg(uses[5]); animateSvg(uses[5]); return }
         if (!isSvgLocked(uses[7])) { drawSvg(uses[7]); animateSvg(uses[7]); return }
     }
+
+
     if (!isSvgLocked(uses[0])) { drawSvg(uses[0]); animateSvg(uses[0]); return }
     if (!isSvgLocked(uses[2])) { drawSvg(uses[2]); animateSvg(uses[2]); return }
     if (!isSvgLocked(uses[6])) { drawSvg(uses[6]); animateSvg(uses[6]); return }
@@ -359,6 +370,9 @@ function strikethrough(x1, y1, x2, y2, top, left, height, width) {
     animateSvg(line, 1000, lineLength);
 }
 // =========================================================
+function copy(someString) {
+    
+}
 
 function reset() {
     isXturn = true;

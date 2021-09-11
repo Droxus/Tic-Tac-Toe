@@ -10,13 +10,18 @@
 </head>
 
 <body class="center grid-lines">
-    <label for="name">Name (4 to 8 characters):</label>
-    <button id="connect" class="favorite styled"
-        type="button">
-    Add to favorites
-</button>
-<input type="text" id="name" name="name">
-    <select name="gameMode"></select>
+    <div class="buttonPanel">
+        <label for="name">Paste here ID:</label>
+        <input type="text" id="name" name="name">
+        <button id="connect" class="favorite styled" type="button">
+            Press to connect
+        </button>
+        <button id="copyID" class="favorite styled" type="button">
+            Copy My ID
+        </button>
+        <select name="gameMode"></select>
+    </div>
+
     <div id="grid">
         <svg class="cell">
             <use></use>
@@ -63,6 +68,7 @@
     </div>
     <script src="https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js"></script>
     <script src="script.js"></script>
-    
+
 </body>
+
 </html>
