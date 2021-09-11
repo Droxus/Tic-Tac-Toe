@@ -3,7 +3,7 @@ let fillCellsCounter, isXturn, TimeOutId, gameMode, isBotTurn, returnCompleteLin
     finished, friendID, connection, myID
 
     const button = document.getElementById('connect');
-    const input = document.getElementById('name');
+    const input = document.getElementById('myID');
 const grid = document.getElementById('grid');
 const cells = Array.from(document.getElementsByClassName('cell'));
 const uses = cells.map((cell) => cell.firstElementChild);
@@ -121,7 +121,7 @@ function onConnection(event) {
 }
 function copyID() {
 console.log('id: ' + myID)
-navigator.clipboard.writeText(myID).then(function() {}
+navigator.clipboard.writeText(myID).then(function() { })
 }
 function changeTurn() {
     if (finished) { return; }
