@@ -1,4 +1,4 @@
-:root {
+html {
     --grid-size: 80vmin;
     --grid-cell-size: 100%;
     --grid-cell-size-vp: calc(var(--grid-size) / 3);
@@ -12,7 +12,17 @@
     --result-modal-content-bg-color: white;
     --result-modal-content-padding: 1vmin;
 }
+html[data-theme='dark'] {
+  --bg-grid-lines-color: black;
+  background-color: black;
+}
+html[data-theme='light'] {
+  linear-gradient(to bottom, transparent var(--grid-cell-size-vp), red var(--grid-lines-width)),
+  linear-gradient(to right, transparent var(--grid-cell-size-vp), red var(--grid-lines-width));
+  --bg-grid-lines-color: lightblue;
+  background-color: white;
 
+}
 html, body {
     margin: 0;
     padding: 0;

@@ -1,6 +1,6 @@
 
 let fillCellsCounter, isXturn, TimeOutId, gameMode, isBotTurn, returnCompleteLine,
-    finished, friendID, connection, myID
+    finished, friendID, connection, myID, isDarkmode
 
 const button = document.getElementById('connect');
 const input = document.getElementById('myID');
@@ -15,6 +15,9 @@ const buttonPressToPasteID = document.getElementById('pasteID')
 const inputFrndID = document.getElementById('friendId')
 const inputMyID = document.getElementById('myID')
 const buttonSwitchTheme = document.getElementById('switchTheme')
+const circle = document.getElementById('circle')
+const line1 = document.getElementById('line1')
+const line2 = document.getElementById('line2')
 const MODE = {
     PVP_ONLINE: 'Online PvP',
     BOT_EASY: 'Easy bot',
@@ -126,6 +129,12 @@ function onConnection(event) {
     })
 }
 function SwitchTheme() {
+    const html = document.getElementsByTagName('html')[0]
+    html.setAttribute('data-theme', isDarkmode ? 'dark' : 'light')
+    circle.setAttribute('stroke', isDarkmode ? 'white' : 'red')
+    line1.setAttribute('stroke', isDarkmode ? 'white' : 'blue')
+    line2.setAttribute('stroke', isDarkmode ? 'white' : 'blue')
+    isDarkmode = !isDarkmode;
 
 }
 function playAgain() {
