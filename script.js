@@ -1,5 +1,5 @@
 
-let fillCellsCounter, isXturn, TimeOutId, gameMode, isBotTurn, returnCompleteLine,
+let fillCellsCounter, isXturn, TimeOutId, gameMode, isBotTurn,
     finished, friendID, connection, myID;
 
 const buttonConnect = document.getElementById('connect');
@@ -16,8 +16,8 @@ const inputFrndID = document.getElementById('friendId');
 const inputMyID = document.getElementById('myID');
 const buttonSwitchTheme = document.getElementById('switchTheme');
 const MODE = {
-    BOT_EASY: 'Easy bot',
     BOT_HARD: 'Insane bot',
+    BOT_EASY: 'Easy bot',
     PVP_OFFLINE: 'Local PvP',
     PVP_ONLINE: 'Online PvP',
 };
@@ -117,8 +117,7 @@ function checkOnlineMode() {
             connection.on('open', function () {
                 connection.on('data', function (index) {
                     changeTurn();
-                    drawSvg(uses[index]);
-                    animateSvg(uses[index]);
+                    occupyCell(uses[index]);
                 });
             });
         });
@@ -157,7 +156,6 @@ function pasteID() {
 
 function copyID() {
     navigator.clipboard.writeText(myID);
-    inputMyID.value = myID;
 }
 function changeTurn() {
     if (finished) { return; }
@@ -207,8 +205,7 @@ function makeOnlinePlayerMove(event) {
 function makePlayerMove(event) {
     const svg = event.currentTarget;
     const use = svg.firstElementChild;
-    drawSvg(use);
-    animateSvg(use);
+    occupyCell(use);
 }
 
 function makeEasyBotMove() {
@@ -217,73 +214,73 @@ function makeEasyBotMove() {
     const randomUnlockedUse = unlockedUses[randomUnlockedUseIndex];
     const isAnyRandomUnlockedUseLeft = !!randomUnlockedUse;
     if (!isAnyRandomUnlockedUseLeft) { return; }
-    drawSvg(randomUnlockedUse);
-    animateSvg(randomUnlockedUse);
+    occupyCell(randomUnlockedUse);
 }
-function completeLine(index1, index2, index3) {
-    if (isSvgLocked(uses[index1]) && uses[index1].getAttribute('href') === uses[index2].getAttribute('href')
-        && !isSvgLocked(uses[index3])) {
-        drawSvg(uses[index3]); animateSvg(uses[index3]); return returnCompleteLine = true;
-    }
-    return returnCompleteLine = false;
+
+function canCompleteLine(index1, index2, index3) {
+    return !isSvgLocked(uses[index3]) && isSvgLocked(uses[index1]) && uses[index1].getAttribute('href') === uses[index2].getAttribute('href');
 }
+
 function makeHardBotMove() {
-    const unlockedUses = uses.filter(use => !isSvgLocked(use));
-    returnCompleteLine = false;
-    for (let i = 0; i < 9; i += 3) {
-        completeLine(i + 1, i, i + 2); if (returnCompleteLine) { return; }
-        completeLine(i + 1, i + 2, i); if (returnCompleteLine) { return; }
-        completeLine(i, i + 2, i + 1); if (returnCompleteLine) { return; }
+    const numberOfRows = 3;
+    const numberOfColumns = numberOfRows;
+    const numberOfCells = numberOfRows * numberOfColumns;
+    const centerCellIndex = Math.floor(numberOfCells / 2);
+    const k1 = 0, k2 = k1 + numberOfColumns - 1, k3 = centerCellIndex, k4 = numberOfCells - numberOfColumns, k5 = numberOfCells - 1;
+    let indexOfCellToOccupy = -1;
+    // check rows and columns
+    for (let i = 0; i < numberOfRows && indexOfCellToOccupy < 0; i++) {
+        const i1 = i * numberOfColumns, i2 = i1 + 1, i3 = i2 + 1;
+        const j1 = i, j2 = j1 + numberOfRows, j3 = j2 + numberOfRows;
+        // check a row no. i
+        /**/ if (canCompleteLine(i2, i1, i3)) { indexOfCellToOccupy = i3; }
+        else if (canCompleteLine(i2, i3, i1)) { indexOfCellToOccupy = i1; }
+        else if (canCompleteLine(i1, i3, i2)) { indexOfCellToOccupy = i2; }
+        // check a column no. i
+        else if (canCompleteLine(j1, j2, j3)) { indexOfCellToOccupy = j3; }
+        else if (canCompleteLine(j1, j3, j2)) { indexOfCellToOccupy = j2; }
+        else if (canCompleteLine(j2, j3, j1)) { indexOfCellToOccupy = j1; }
     }
-    for (let i = 0; i < 3; i++) {
-        completeLine(i, i + 3, i + 6); if (returnCompleteLine) { return; }
-        completeLine(i, i + 6, i + 3); if (returnCompleteLine) { return; }
-        completeLine(i + 3, i + 6, i); if (returnCompleteLine) { return; }
-    }
-    completeLine(2, 4, 6); if (returnCompleteLine) { return; }
-    completeLine(4, 6, 2); if (returnCompleteLine) { return; }
-    completeLine(6, 2, 4); if (returnCompleteLine) { return; }
 
-    completeLine(0, 4, 8); if (returnCompleteLine) { return; }
-    completeLine(4, 8, 0); if (returnCompleteLine) { return; }
-    completeLine(8, 0, 4); if (returnCompleteLine) { return; }
+    if (indexOfCellToOccupy > -1) { indexOfCellToOccupy = indexOfCellToOccupy; }
+    // check the diagonal from top left to bottom right
+    else if (canCompleteLine(k1, k3, k5)) { indexOfCellToOccupy = k5; }
+    else if (canCompleteLine(k3, k5, k1)) { indexOfCellToOccupy = k1; }
+    else if (canCompleteLine(k5, k1, k3)) { indexOfCellToOccupy = k3; }
+    // check the diagonal from top right to bottom left
+    else if (canCompleteLine(k2, k3, k4)) { indexOfCellToOccupy = k4; }
+    else if (canCompleteLine(k3, k4, k2)) { indexOfCellToOccupy = k2; }
+    else if (canCompleteLine(k4, k2, k3)) { indexOfCellToOccupy = k3; }
 
+    else if (!isSvgLocked(uses[4])) { indexOfCellToOccupy = centerCellIndex; }
 
-    if (!isSvgLocked(uses[4])) { drawSvg(uses[4]); animateSvg(uses[4]); return; }
-    if (isSvgLocked(uses[4]) && uses[4].getAttribute('href') === '#cross' && isSvgLocked(uses[0]) ||
+    else if (isSvgLocked(uses[4]) && uses[4].getAttribute('href') === '#cross' && isSvgLocked(uses[0]) ||
         isSvgLocked(uses[2]) || isSvgLocked(uses[6]) || isSvgLocked(uses[8])) {
-        if (!isSvgLocked(uses[0])) { drawSvg(uses[0]); animateSvg(uses[0]); return; }
-        if (!isSvgLocked(uses[2])) { drawSvg(uses[2]); animateSvg(uses[2]); return; }
-        if (!isSvgLocked(uses[6])) { drawSvg(uses[6]); animateSvg(uses[6]); return; }
-        if (!isSvgLocked(uses[8])) { drawSvg(uses[8]); animateSvg(uses[8]); return; }
+        if (!isSvgLocked(uses[0])) { indexOfCellToOccupy = 0; }
+        else if (!isSvgLocked(uses[2])) { indexOfCellToOccupy = 2; }
+        else if (!isSvgLocked(uses[6])) { indexOfCellToOccupy = 6; }
+        else if (!isSvgLocked(uses[8])) { indexOfCellToOccupy = 8; }
     }
-    if (isSvgLocked(uses[4]) && uses[4].getAttribute('href') === '#circle' && isSvgLocked(uses[0]) ||
+    else if (isSvgLocked(uses[4]) && uses[4].getAttribute('href') === '#circle' && isSvgLocked(uses[0]) ||
         isSvgLocked(uses[2]) || isSvgLocked(uses[6]) || isSvgLocked(uses[8])) {
-        if (!isSvgLocked(uses[1])) { drawSvg(uses[1]); animateSvg(uses[1]); return; }
-        if (!isSvgLocked(uses[3])) { drawSvg(uses[3]); animateSvg(uses[3]); return; }
-        if (!isSvgLocked(uses[5])) { drawSvg(uses[5]); animateSvg(uses[5]); return; }
-        if (!isSvgLocked(uses[7])) { drawSvg(uses[7]); animateSvg(uses[7]); return; }
+        if (!isSvgLocked(uses[1])) { indexOfCellToOccupy = 1; }
+        else if (!isSvgLocked(uses[3])) { indexOfCellToOccupy = 3 }
+        else if (!isSvgLocked(uses[5])) { indexOfCellToOccupy = 5; }
+        else if (!isSvgLocked(uses[7])) { indexOfCellToOccupy = 7; }
     }
+    else if (!isSvgLocked(uses[0])) { indexOfCellToOccupy = 0; }
+    else if (!isSvgLocked(uses[2])) { indexOfCellToOccupy = 2; }
+    else if (!isSvgLocked(uses[6])) { indexOfCellToOccupy = 6; }
+    else if (!isSvgLocked(uses[8])) { indexOfCellToOccupy = 8; }
 
-
-    if (!isSvgLocked(uses[0])) { drawSvg(uses[0]); animateSvg(uses[0]); return; }
-    if (!isSvgLocked(uses[2])) { drawSvg(uses[2]); animateSvg(uses[2]); return; }
-    if (!isSvgLocked(uses[6])) { drawSvg(uses[6]); animateSvg(uses[6]); return; }
-    if (!isSvgLocked(uses[8])) { drawSvg(uses[8]); animateSvg(uses[8]); return; }
-
-    const randomUnlockedUseIndex = Math.floor(Math.random() * unlockedUses.length);
-    const randomUnlockedUse = unlockedUses[randomUnlockedUseIndex];
-    const isAnyRandomUnlockedUseLeft = !!randomUnlockedUse;
-    if (!isAnyRandomUnlockedUseLeft) { return; }
-    drawSvg(randomUnlockedUse);
-    animateSvg(randomUnlockedUse);
+    indexOfCellToOccupy > -1 ? occupyCell(uses[indexOfCellToOccupy]) : makeEasyBotMove();
 }
 
 function checkWinner() {
     for (let i = 0; i < 9; i += 3) {
         const isRowSet = uses[i + 1].getAttribute('href') &&
-            uses[i].getAttribute('href') === uses[i + 1].getAttribute('href') &&
-            uses[i + 1].getAttribute('href') === uses[i + 2].getAttribute('href');
+        uses[i].getAttribute('href') === uses[i + 1].getAttribute('href') &&
+        uses[i + 1].getAttribute('href') === uses[i + 2].getAttribute('href');
         if (isRowSet) {
             const cellBoundingClientRect = uses[i].parentNode.getBoundingClientRect();
             const top = cellBoundingClientRect.top + cellBoundingClientRect.height / 2;
@@ -292,12 +289,12 @@ function checkWinner() {
             announce("Winner " + (!isXturn ? 'X' : 'O') + "!");
             return;
         }
-
+        
     }
     for (let i = 0; i < 3; i++) {
         const isColumnSet = uses[i + 3].getAttribute('href') &&
-            uses[i].getAttribute('href') === uses[i + 3].getAttribute('href') &&
-            uses[i + 3].getAttribute('href') === uses[i + 6].getAttribute('href');
+        uses[i].getAttribute('href') === uses[i + 3].getAttribute('href') &&
+        uses[i + 3].getAttribute('href') === uses[i + 6].getAttribute('href');
         if (isColumnSet) {
             const cellBoundingClientRect = uses[i].parentNode.getBoundingClientRect();
             const top = cellBoundingClientRect.top;
@@ -307,11 +304,11 @@ function checkWinner() {
             return;
         }
     }
-
+    
     if (!uses[4].getAttribute('href')) { return; }
-
+    
     if (uses[2].getAttribute('href') === uses[4].getAttribute('href') &&
-        uses[4].getAttribute('href') === uses[6].getAttribute('href')) {
+    uses[4].getAttribute('href') === uses[6].getAttribute('href')) {
         const top = uses[2].parentNode.getBoundingClientRect().top;
         const left = uses[6].parentNode.getBoundingClientRect().left;
         strikethrough('100%', 0, 0, '100%', top, left);
@@ -387,6 +384,11 @@ function animateSvg(element, duration, strokeDashLength = 1000) {
         easing: 'ease-out',
         fill: 'forwards'
     });
+}
+
+function occupyCell(use) {
+    drawSvg(use);
+    animateSvg(use);
 }
 
 function strikethrough(x1, y1, x2, y2, top, left, height, width) {
