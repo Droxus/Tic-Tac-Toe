@@ -1,10 +1,20 @@
 
-let fillCellsCounter, isXturn, TimeOutId, gameMode, isBotTurn, returnCompleteLine, finished;
+let fillCellsCounter, isXturn, TimeOutId, gameMode, isBotTurn, returnCompleteLine,
+    finished, friendID, connection, myID;
+
+const buttonConnect = document.getElementById('connect');
+const input = document.getElementById('myID');
 const grid = document.getElementById('grid');
 const cells = Array.from(document.getElementsByClassName('cell'));
 const uses = cells.map((cell) => cell.firstElementChild);
 const svgStrikethrough = document.getElementById('strikethrough');
 const select = document.getElementsByName('gameMode')[0];
+const buttonPressToCopyID = document.getElementById('copyID');
+const buttonPressToPlayAgain = document.getElementById('playAgain');
+const buttonPressToPasteID = document.getElementById('pasteID');
+const inputFrndID = document.getElementById('friendId');
+const inputMyID = document.getElementById('myID');
+const buttonSwitchTheme = document.getElementById('switchTheme');
 const MODE = {
     BOT_EASY: 'Easy bot',
     BOT_HARD: 'Insane bot',
@@ -13,6 +23,7 @@ const MODE = {
 };
 const modal = document.getElementById('modal');
 const modalContent = document.getElementById('modal-content');
+const onlineControlsPanel = document.getElementById('online-controls');
 
 // ========================= Setup =========================
 for (const mode in MODE) {
@@ -22,8 +33,14 @@ for (const mode in MODE) {
 }
 
 window.onclick = onWindowClick;
+window.onload = onWindowLoad;
 
 select.addEventListener('input', onSelect);
+buttonConnect.addEventListener('click', onConnection);
+buttonSwitchTheme.addEventListener('click', switchTheme);
+buttonPressToCopyID.addEventListener('click', copyID);
+buttonPressToPlayAgain.addEventListener('click', playAgain);
+buttonPressToPasteID.addEventListener('click', pasteID);
 
 for (let index = 0; index < cells.length; index++) {
     const cell = cells[index];
@@ -34,12 +51,14 @@ for (let index = 0; index < cells.length; index++) {
 
 reset();
 checkBotTurn();
+checkOnlineMode();
 // =========================================================
 
 // ==================== Event Listeners ====================
 function onSelect(event) {
     reset();
     checkBotTurn();
+    checkOnlineMode();
 }
 
 function onEnter(event) {
@@ -72,6 +91,10 @@ function onClick(event) {
 function onWindowClick(event) {
     if (Array.from(modal.children).includes(event.target)) { hideModal(); }
 }
+
+function onWindowLoad(event) {
+    // TODO check user's prefered color theme and reflect it on the page
+}
 // =========================================================
 
 // ========================= Moves =========================
@@ -81,7 +104,61 @@ function checkBotTurn() {
     makeEasyBotMove();
     changeTurn();
 }
+function checkOnlineMode() {
+    const isOnlineMode = gameMode === MODE.PVP_ONLINE;
+    if (isOnlineMode) {
+        peer = new Peer();
+        peer.on('open', function (id) {
+            myID = id;
+            inputMyID.innerText = myID;
+        });
+        peer.on('connection', function (conn) {
+            connection = conn;
+            connection.on('open', function () {
+                connection.on('data', function (index) {
+                    changeTurn();
+                    drawSvg(uses[index]);
+                    animateSvg(uses[index]);
+                });
+            });
+        });
+        showOnlineControls();
+    } else {
+        hideOnlineControls();
+    }
+}
+function onConnection(event) {
+    friendID = input.value;
+    connection = peer.connect(friendID);
+    connection.on('open', function () {
+        connection.on('data', function (data) {
+        });
+    });
+}
+function switchTheme() {
+    const root = document.documentElement;
+    const isDarkModeEnabled = root.hasAttribute('data-theme');
+    if (isDarkModeEnabled) {
+        root.removeAttribute('data-theme');
+        buttonSwitchTheme.innerText = 'Dark Theme';
+    } else {
+        root.setAttribute('data-theme', 'dark');
+        buttonSwitchTheme.innerText = 'Light Theme';
+    }
+}
+function playAgain() {
+    reset();
+}
+function pasteID() {
+    navigator.clipboard.readText().then(function (clipText) {
+        inputFrndID.value = clipText;
+    });
+}
 
+function copyID() {
+    navigator.clipboard.writeText(myID);
+    inputMyID.value = myID;
+}
 function changeTurn() {
     if (finished) { return; }
     fillCellsCounter++;
@@ -110,13 +187,23 @@ function makeMove(event) {
                 makeHardBotMove();
             }
         } break;
+        case MODE.PVP_ONLINE: {
+            makeOnlinePlayerMove(event);
+
+        } break;
         default: {
             makePlayerMove(event);
         }
     }
     changeTurn();
 }
+function makeOnlinePlayerMove(event) {
+    makePlayerMove(event);
+    const cell = event.currentTarget;
+    const index = cells.indexOf(cell);
+    connection.send(index);
 
+}
 function makePlayerMove(event) {
     const svg = event.currentTarget;
     const use = svg.firstElementChild;
@@ -142,37 +229,47 @@ function completeLine(index1, index2, index3) {
 }
 function makeHardBotMove() {
     const unlockedUses = uses.filter(use => !isSvgLocked(use));
-    returnCompleteLine = false
+    returnCompleteLine = false;
     for (let i = 0; i < 9; i += 3) {
-        completeLine(i + 1, i, i + 2); if (returnCompleteLine) { return }
-        completeLine(i + 1, i + 2, i); if (returnCompleteLine) { return }
-        completeLine(i, i + 2, i + 1); if (returnCompleteLine) { return }
+        completeLine(i + 1, i, i + 2); if (returnCompleteLine) { return; }
+        completeLine(i + 1, i + 2, i); if (returnCompleteLine) { return; }
+        completeLine(i, i + 2, i + 1); if (returnCompleteLine) { return; }
     }
     for (let i = 0; i < 3; i++) {
-        completeLine(i, i + 3, i + 6); if (returnCompleteLine) { return }
-        completeLine(i, i + 6, i + 3); if (returnCompleteLine) { return }
-        completeLine(i + 3, i + 6, i); if (returnCompleteLine) { return }
+        completeLine(i, i + 3, i + 6); if (returnCompleteLine) { return; }
+        completeLine(i, i + 6, i + 3); if (returnCompleteLine) { return; }
+        completeLine(i + 3, i + 6, i); if (returnCompleteLine) { return; }
     }
-    completeLine(2, 4, 6); if (returnCompleteLine) { return }
-    completeLine(4, 6, 2); if (returnCompleteLine) { return }
-    completeLine(6, 2, 4); if (returnCompleteLine) { return }
+    completeLine(2, 4, 6); if (returnCompleteLine) { return; }
+    completeLine(4, 6, 2); if (returnCompleteLine) { return; }
+    completeLine(6, 2, 4); if (returnCompleteLine) { return; }
 
-    completeLine(0, 4, 8); if (returnCompleteLine) { return }
-    completeLine(4, 8, 0); if (returnCompleteLine) { return }
-    completeLine(8, 0, 4); if (returnCompleteLine) { return }
+    completeLine(0, 4, 8); if (returnCompleteLine) { return; }
+    completeLine(4, 8, 0); if (returnCompleteLine) { return; }
+    completeLine(8, 0, 4); if (returnCompleteLine) { return; }
 
 
-    if (!isSvgLocked(uses[4])) { drawSvg(uses[4]); animateSvg(uses[4]); return }
-    if (isSvgLocked(uses[4]) && isSvgLocked(uses[0]) || isSvgLocked(uses[2]) || isSvgLocked(uses[6]) || isSvgLocked(uses[8])) {
-        if (!isSvgLocked(uses[1])) { drawSvg(uses[1]); animateSvg(uses[1]); return }
-        if (!isSvgLocked(uses[3])) { drawSvg(uses[3]); animateSvg(uses[3]); return }
-        if (!isSvgLocked(uses[5])) { drawSvg(uses[5]); animateSvg(uses[5]); return }
-        if (!isSvgLocked(uses[7])) { drawSvg(uses[7]); animateSvg(uses[7]); return }
+    if (!isSvgLocked(uses[4])) { drawSvg(uses[4]); animateSvg(uses[4]); return; }
+    if (isSvgLocked(uses[4]) && uses[4].getAttribute('href') === '#cross' && isSvgLocked(uses[0]) ||
+        isSvgLocked(uses[2]) || isSvgLocked(uses[6]) || isSvgLocked(uses[8])) {
+        if (!isSvgLocked(uses[0])) { drawSvg(uses[0]); animateSvg(uses[0]); return; }
+        if (!isSvgLocked(uses[2])) { drawSvg(uses[2]); animateSvg(uses[2]); return; }
+        if (!isSvgLocked(uses[6])) { drawSvg(uses[6]); animateSvg(uses[6]); return; }
+        if (!isSvgLocked(uses[8])) { drawSvg(uses[8]); animateSvg(uses[8]); return; }
     }
-    if (!isSvgLocked(uses[0])) { drawSvg(uses[0]); animateSvg(uses[0]); return }
-    if (!isSvgLocked(uses[2])) { drawSvg(uses[2]); animateSvg(uses[2]); return }
-    if (!isSvgLocked(uses[6])) { drawSvg(uses[6]); animateSvg(uses[6]); return }
-    if (!isSvgLocked(uses[8])) { drawSvg(uses[8]); animateSvg(uses[8]); return }
+    if (isSvgLocked(uses[4]) && uses[4].getAttribute('href') === '#circle' && isSvgLocked(uses[0]) ||
+        isSvgLocked(uses[2]) || isSvgLocked(uses[6]) || isSvgLocked(uses[8])) {
+        if (!isSvgLocked(uses[1])) { drawSvg(uses[1]); animateSvg(uses[1]); return; }
+        if (!isSvgLocked(uses[3])) { drawSvg(uses[3]); animateSvg(uses[3]); return; }
+        if (!isSvgLocked(uses[5])) { drawSvg(uses[5]); animateSvg(uses[5]); return; }
+        if (!isSvgLocked(uses[7])) { drawSvg(uses[7]); animateSvg(uses[7]); return; }
+    }
+
+
+    if (!isSvgLocked(uses[0])) { drawSvg(uses[0]); animateSvg(uses[0]); return; }
+    if (!isSvgLocked(uses[2])) { drawSvg(uses[2]); animateSvg(uses[2]); return; }
+    if (!isSvgLocked(uses[6])) { drawSvg(uses[6]); animateSvg(uses[6]); return; }
+    if (!isSvgLocked(uses[8])) { drawSvg(uses[8]); animateSvg(uses[8]); return; }
 
     const randomUnlockedUseIndex = Math.floor(Math.random() * unlockedUses.length);
     const randomUnlockedUse = unlockedUses[randomUnlockedUseIndex];
@@ -240,6 +337,7 @@ function announce(announcement) {
     setTimeout(() => {
         reset();
         checkBotTurn();
+        checkOnlineMode();
         hideModal();
     }, 2000);
 }
@@ -251,6 +349,14 @@ function showModal(text) {
 
 function hideModal() {
     modal.style.display = 'none';
+}
+
+function showOnlineControls() {
+    onlineControlsPanel.style.display = 'block';
+}
+
+function hideOnlineControls() {
+    onlineControlsPanel.style.display = 'none';
 }
 // =========================================================
 
@@ -271,7 +377,7 @@ function drawSvg(use, opacity = 1, locked = true) {
 }
 
 function animateSvg(element, duration, strokeDashLength = 1000) {
-    duration = duration ? 1000 : (isXturn ? 2000 : 1500)
+    duration = duration ? 1000 : (isXturn ? 2000 : 1500);
     element.style.strokeDasharray = strokeDashLength;
     element.animate([
         { strokeDashoffset: strokeDashLength },
@@ -297,7 +403,9 @@ function strikethrough(x1, y1, x2, y2, top, left, height, width) {
     line.setAttribute('y1', '' + y1);
     line.setAttribute('x2', '' + x2);
     line.setAttribute('y2', '' + y2);
-    line.setAttribute('stroke', isXturn ? 'red' : 'blue');
+    const rootStyle = window.getComputedStyle(document.documentElement);
+    const winnerStrokeColor = rootStyle.getPropertyValue(isXturn ? '--circle-stroke-color' : '--cross-stroke-color');
+    line.setAttribute('stroke', winnerStrokeColor);
     line.setAttribute('stroke-width', isDiagonale ? '2%' : '5%');
     svg.style.top = top;
     svg.style.left = left;
@@ -308,12 +416,15 @@ function strikethrough(x1, y1, x2, y2, top, left, height, width) {
     animateSvg(line, 1000, lineLength);
 }
 // =========================================================
+function copy(someString) {
+
+}
 
 function reset() {
     isXturn = true;
     fillCellsCounter = 0;
     gameMode = select.value;
-    isBotTurn = false
+    isBotTurn = false;
     svgStrikethrough.style.display = 'none';
     for (let index = 0; index < cells.length; index++) {
         const cell = cells[index];
