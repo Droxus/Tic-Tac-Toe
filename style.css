@@ -1,45 +1,62 @@
 html {
-    --grid-size: 80vmin;
-    --grid-cell-size: 100%;
-    --grid-cell-size-vp: calc(var(--grid-size) / 3);
-    --grid-lines-color: red;
-    --grid-lines-width: 1vmin;
-    --bg-grid-lines-color: lightblue;
-    --bg-grid-lines-width: 20px;
-    --grid-lines-size: calc(var(--grid-cell-size-vp) + var(--grid-lines-width));
-    --result-modal-bg-color: rgba(0,0,0,0.5);
-    --result-modal-bg-blur-radius: 4px;
-    --result-modal-content-bg-color: white;
-    --result-modal-content-padding: 1vmin;
+  --bg-color-primary: lightblue;
+  --bg-color-secondary: white;
+  --fg-color: black;
+  --grid-lines-color: red;
+  --cross-stroke-color: blue;
+  --circle-stroke-color: red;
+  --result-modal-bg-color: rgba(0, 0, 0, 0.5);
+  --result-modal-content-bg-color: white;
+  --grid-size: 80vmin;
+  --grid-cell-size: 100%;
+  --grid-cell-size-vp: calc(var(--grid-size) / 3);
+  --grid-lines-width: 1vmin;
+  --bg-grid-lines-width: 20px;
+  --grid-lines-size: calc(var(--grid-cell-size-vp) + var(--grid-lines-width));
+  --result-modal-bg-blur-radius: 4px;
+  --result-modal-content-padding: 1vmin;
 }
-html[data-theme='dark'] {
-  --bg-grid-lines-color: black;
-  background-color: black;
-}
-html[data-theme='light'] {
-  linear-gradient(to bottom, transparent var(--grid-cell-size-vp), red var(--grid-lines-width)),
-  linear-gradient(to right, transparent var(--grid-cell-size-vp), red var(--grid-lines-width));
-  --bg-grid-lines-color: lightblue;
-  background-color: white;
 
+html[data-theme='dark'] {
+  --bg-color-primary: rgb(30, 30, 40);
+  --bg-color-secondary: black;
+  --fg-color: white;
+  --cross-stroke-color: blue;
+  --circle-stroke-color: red;
+  --grid-lines-color: red;
+  --result-modal-bg-color: rgba(58, 58, 58, 0.5);
+  --result-modal-content-bg-color: black;
 }
+
 html, body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
+  background-color: var(--bg-color-secondary);
+  color: var(--fg-color);
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#cross line {
+  stroke: var(--cross-stroke-color);
+}
+
+#circle {
+  stroke: var(--circle-stroke-color);
 }
 
 .grid-lines {
-    background-image: linear-gradient(to right, var(--bg-grid-lines-color) 1px, transparent 1px), linear-gradient(to bottom, var(--bg-grid-lines-color) 1px, transparent 1px);
-    background-size: var(--bg-grid-lines-width) var(--bg-grid-lines-width);
+  background-image:
+    linear-gradient(to right, var(--bg-color-primary) 1px, transparent 1px), 
+    linear-gradient(to bottom, var(--bg-color-primary) 1px, transparent 1px);
+  background-size: var(--bg-grid-lines-width) var(--bg-grid-lines-width);
 }
 
 .center {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .center-horizontally {
@@ -55,7 +72,7 @@ html, body {
 }
 
 #online-controls {
-  margin: 10px;
+  margin: 0.75rem;
 }
 
 #switchTheme {
@@ -65,47 +82,48 @@ html, body {
 }
 
 #grid {
-    position: relative;
-    width: var(--grid-size);
-    height: var(--grid-size);
-    display: grid;
-    grid-template-columns: repeat(3, calc(var(--grid-size) / 3));
-    grid-template-rows: repeat(3, calc(var(--grid-size) / 3));
-    gap: var(--grid-lines-width);
+  z-index: 1;
+  position: relative;
+  width: var(--grid-size);
+  height: var(--grid-size);
+  display: grid;
+  grid-template-columns: repeat(3, calc(var(--grid-size) / 3));
+  grid-template-rows: repeat(3, calc(var(--grid-size) / 3));
+  gap: var(--grid-lines-width);
 }
 
 #grid::before {
-    z-index: -1;
-    position: absolute;
-    top: 0;
-    left: 0;
+  z-index: -1;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  content: " ";
+  background-size: var(--grid-lines-size) var(--grid-lines-size);
+  background-image: 
+    linear-gradient(to bottom, transparent var(--grid-cell-size-vp), var(--grid-lines-color) var(--grid-lines-width)),
+    linear-gradient(to right, transparent var(--grid-cell-size-vp), var(--grid-lines-color) var(--grid-lines-width));
+  background-position: top left;
+  animation: gridWipe 1s linear;
+}
+
+@keyframes gridWipe {
+  0% {
+    width: 0px;
+    height: 0px;
+  }
+  100% {
     width: 100%;
     height: 100%;
-    display: block;
-    content: " ";
-    background-size: var(--grid-lines-size) var(--grid-lines-size);
-    background-image:
-        linear-gradient(to bottom, transparent var(--grid-cell-size-vp), red var(--grid-lines-width)),
-        linear-gradient(to right, transparent var(--grid-cell-size-vp), red var(--grid-lines-width));
-    background-position: top left;
-    animation: gridWipe 1s linear;
   }
-  
-  @keyframes gridWipe {
-    0% {
-      width: 0px;
-      height: 0px;
-    }
-    100% {
-      width: 100%;
-      height: 100%;
-    }
-  }
+}
 
 .cell {
-    display: block;
-    height: var(--grid-cell-size);
-    width: var(--grid-cell-size);
+  display: block;
+  height: var(--grid-cell-size);
+  width: var(--grid-cell-size);
 }
 
 #modal {
@@ -118,10 +136,12 @@ html, body {
   background-color: var(--result-modal-bg-color);
   backdrop-filter: blur(var(--result-modal-bg-blur-radius));
 }
+
 #modal-content {
   background-color: var(--result-modal-content-bg-color);
   padding: var(--result-modal-content-padding);
 }
+
 #modal .center {
   width: 100%;
   height: 100%;
