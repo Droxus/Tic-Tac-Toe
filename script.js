@@ -216,62 +216,64 @@ function makeEasyBotMove() {
     if (!isAnyRandomUnlockedUseLeft) { return; }
     occupyCell(randomUnlockedUse);
 }
+
+function canCompleteLine(index1, index2, index3) {
+    return !isSvgLocked(uses[index3]) && isSvgLocked(uses[index1]) && uses[index1].getAttribute('href') === uses[index2].getAttribute('href');
+}
+
 function makeHardBotMove() {
-    let cellIndexToOccupy = -1;
     const numberOfRows = 3;
     const numberOfColumns = numberOfRows;
-    // check rows and columns
-    for (let i = 0; i < numberOfRows && cellIndexToOccupy < 0; i++) {
-        const i1 = i * numberOfColumns, i2 = i1 + 1, i3 = i2 + 1;
-        const j1 = i, j2 = j1 + numberOfRows, j3 = j2 + numberOfRows;
-        // check row no. i
-        /**/ if (canCompleteLine(i1, i2, i3)) { cellIndexToOccupy = i3; }
-        else if (canCompleteLine(i2, i3, i1)) { cellIndexToOccupy = i1; }
-        else if (canCompleteLine(i3, i1, i2)) { cellindexToOccupy = i2; }
-        // check column no. i
-        else if (canCompleteLine(j1, j2, j3)) { cellindexToOccupy = j3; }
-        else if (canCompleteLine(j2, j3, j1)) { cellindexToOccupy = j1; }
-        else if (canCompleteLine(j3, j1, j2)) { cellindexToOccupy = j2; }
-    }
-    
-    if (cellIndexToOccupy > -1) { occupyCell(uses[cellIndexToOccupy]); return; }
-    
     const numberOfCells = numberOfRows * numberOfColumns;
     const centerCellIndex = Math.floor(numberOfCells / 2);
     const k1 = 0, k2 = k1 + numberOfColumns - 1, k3 = centerCellIndex, k4 = numberOfCells - numberOfColumns, k5 = numberOfCells - 1;
+    let indexOfCellToOccupy = -1;
+    // check rows and columns
+    for (let i = 0; i < numberOfRows && indexOfCellToOccupy < 0; i++) {
+        const i1 = i * numberOfColumns, i2 = i1 + 1, i3 = i2 + 1;
+        const j1 = i, j2 = j1 + numberOfRows, j3 = j2 + numberOfRows;
+        // check a row no. i
+        /**/ if (canCompleteLine(i2, i1, i3)) { indexOfCellToOccupy = i3; }
+        else if (canCompleteLine(i2, i3, i1)) { indexOfCellToOccupy = i1; }
+        else if (canCompleteLine(i1, i3, i2)) { indexOfCellToOccupy = i2; }
+        // check a column no. i
+        else if (canCompleteLine(j1, j2, j3)) { indexOfCellToOccupy = j3; }
+        else if (canCompleteLine(j1, j3, j2)) { indexOfCellToOccupy = j2; }
+        else if (canCompleteLine(j2, j3, j1)) { indexOfCellToOccupy = j1; }
+    }
+
+    if (indexOfCellToOccupy > -1) { indexOfCellToOccupy = indexOfCellToOccupy; }
     // check the diagonal from top left to bottom right
-    /**/ if (canCompleteLine(k1, k3, k5)) { cellIndexToOccupy = k5; }
-    else if (canCompleteLine(k3, k5, k1)) { cellIndexToOccupy = k1; }
-    else if (canCompleteLine(k5, k1, k3)) { cellindexToOccupy = k3; }
+    else if (canCompleteLine(k1, k3, k5)) { indexOfCellToOccupy = k5; }
+    else if (canCompleteLine(k3, k5, k1)) { indexOfCellToOccupy = k1; }
+    else if (canCompleteLine(k5, k1, k3)) { indexOfCellToOccupy = k3; }
     // check the diagonal from top right to bottom left
-    else if (canCompleteLine(k2, k3, k4)) { cellIndexToOccupy = k4; }
-    else if (canCompleteLine(k3, k4, k2)) { cellIndexToOccupy = k2; }
-    else if (canCompleteLine(k4, k2, k3)) { cellindexToOccupy = k3; }
+    else if (canCompleteLine(k2, k3, k4)) { indexOfCellToOccupy = k4; }
+    else if (canCompleteLine(k3, k4, k2)) { indexOfCellToOccupy = k2; }
+    else if (canCompleteLine(k4, k2, k3)) { indexOfCellToOccupy = k3; }
 
-    else if (!isSvgLocked(uses[centerCellIndex])) { cellIndexToOccupy = centerCellIndex; }
+    else if (!isSvgLocked(uses[4])) { indexOfCellToOccupy = centerCellIndex; }
 
-    else if (isSvgLocked(uses[4]) && uses[4].getAttribute('href') === '#cross' && isSvgLocked(uses[0]) || isSvgLocked(uses[2]) || isSvgLocked(uses[6]) || isSvgLocked(uses[8])) {
-        /**/ if (!isSvgLocked(uses[0])) { cellIndexToOccupy = 0; }
-        else if (!isSvgLocked(uses[2])) { cellIndexToOccupy = 2; }
-        else if (!isSvgLocked(uses[6])) { cellIndexToOccupy = 6; }
-        else if (!isSvgLocked(uses[8])) { cellIndexToOccupy = 8; }
+    else if (isSvgLocked(uses[4]) && uses[4].getAttribute('href') === '#cross' && isSvgLocked(uses[0]) ||
+        isSvgLocked(uses[2]) || isSvgLocked(uses[6]) || isSvgLocked(uses[8])) {
+        if (!isSvgLocked(uses[0])) { indexOfCellToOccupy = 0; }
+        else if (!isSvgLocked(uses[2])) { indexOfCellToOccupy = 2; }
+        else if (!isSvgLocked(uses[6])) { indexOfCellToOccupy = 6; }
+        else if (!isSvgLocked(uses[8])) { indexOfCellToOccupy = 8; }
     }
-    else if (isSvgLocked(uses[4]) && uses[4].getAttribute('href') === '#circle' && isSvgLocked(uses[0]) || isSvgLocked(uses[2]) || isSvgLocked(uses[6]) || isSvgLocked(uses[8])) {
-        /**/ if (!isSvgLocked(uses[1])) { cellIndexToOccupy = 1; }
-        else if (!isSvgLocked(uses[3])) { cellIndexToOccupy = 3; }
-        else if (!isSvgLocked(uses[5])) { cellIndexToOccupy = 5; }
-        else if (!isSvgLocked(uses[7])) { cellIndexToOccupy = 7; }
+    else if (isSvgLocked(uses[4]) && uses[4].getAttribute('href') === '#circle' && isSvgLocked(uses[0]) ||
+        isSvgLocked(uses[2]) || isSvgLocked(uses[6]) || isSvgLocked(uses[8])) {
+        if (!isSvgLocked(uses[1])) { indexOfCellToOccupy = 1; }
+        else if (!isSvgLocked(uses[3])) { indexOfCellToOccupy = 3 }
+        else if (!isSvgLocked(uses[5])) { indexOfCellToOccupy = 5; }
+        else if (!isSvgLocked(uses[7])) { indexOfCellToOccupy = 7; }
     }
-    else if (!isSvgLocked(uses[0])) { cellIndexToOccupy = 0; }
-    else if (!isSvgLocked(uses[2])) { cellIndexToOccupy = 2; }
-    else if (!isSvgLocked(uses[6])) { cellIndexToOccupy = 6; }
-    else if (!isSvgLocked(uses[8])) { cellIndexToOccupy = 8; }
+    else if (!isSvgLocked(uses[0])) { indexOfCellToOccupy = 0; }
+    else if (!isSvgLocked(uses[2])) { indexOfCellToOccupy = 2; }
+    else if (!isSvgLocked(uses[6])) { indexOfCellToOccupy = 6; }
+    else if (!isSvgLocked(uses[8])) { indexOfCellToOccupy = 8; }
 
-    cellIndexToOccupy > -1 ? occupyCell(uses[cellIndexToOccupy]) : makeEasyBotMove();
-}
-
-function canCompleteLine(index1, index2, index3) {
-    return isSvgLocked(uses[index1]) && uses[index1].getAttribute('href') === uses[index2].getAttribute('href') && !isSvgLocked(uses[index3]);
+    indexOfCellToOccupy > -1 ? occupyCell(uses[indexOfCellToOccupy]) : makeEasyBotMove();
 }
 
 function checkWinner() {
