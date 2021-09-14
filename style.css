@@ -18,12 +18,14 @@ html {
 }
 
 html[data-theme='dark'] {
-  --bg-color-primary: rgb(30, 30, 40);
-  --bg-color-secondary: black;
+  /* --bg-color-primary: rgb(30, 30, 40); */
+  /* --bg-color-primary: rgb(20, 20, 20); */
+  --bg-color-primary: black;
+  --bg-color-secondary:  #121212;
   --fg-color: white;
-  --cross-stroke-color: blue;
-  --circle-stroke-color: red;
-  --grid-lines-color: red;
+  --cross-stroke-color: #94b6ff;
+  --circle-stroke-color: #ff9191;
+  --grid-lines-color: rgb(202, 169, 62);
   --result-modal-bg-color: rgba(58, 58, 58, 0.5);
   --result-modal-content-bg-color: black;
 }
