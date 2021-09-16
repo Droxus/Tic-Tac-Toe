@@ -106,7 +106,7 @@ function checkBotTurn() {
 function checkOnlineMode() {
     const isOnlineMode = gameMode === MODE.PVP_ONLINE;
     if (isOnlineMode) {
-        peer = new Peer();
+        peer = new Peer(undefined, { debug: 3 });
         peer.on('open', function (id) {
             myID = id;
             inputMyID.innerText = myID;
