@@ -15,9 +15,9 @@ const inputFrndID = document.getElementById('friendId');
 const inputMyID = document.getElementById('myID');
 const buttonSwitchTheme = document.getElementById('switchTheme');
 const MODE = {
-    PVP_ONLINE: 'Online PvP',
     BOT_HARD: 'Insane bot',
     BOT_EASY: 'Easy bot',
+    PVP_ONLINE: 'Online PvP',
     PVP_OFFLINE: 'Local PvP',
 };
 const modal = document.getElementById('modal');
