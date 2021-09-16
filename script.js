@@ -3,7 +3,6 @@ let fillCellsCounter, isXturn, TimeOutId, gameMode, isBotTurn,
     finished, friendID, connection, myID;
 
 const buttonConnect = document.getElementById('connect');
-const input = document.getElementById('myID');
 const grid = document.getElementById('grid');
 const cells = Array.from(document.getElementsByClassName('cell'));
 const uses = cells.map((cell) => cell.firstElementChild);
@@ -16,10 +15,10 @@ const inputFrndID = document.getElementById('friendId');
 const inputMyID = document.getElementById('myID');
 const buttonSwitchTheme = document.getElementById('switchTheme');
 const MODE = {
+    PVP_ONLINE: 'Online PvP',
     BOT_HARD: 'Insane bot',
     BOT_EASY: 'Easy bot',
     PVP_OFFLINE: 'Local PvP',
-    PVP_ONLINE: 'Online PvP',
 };
 const modal = document.getElementById('modal');
 const modalContent = document.getElementById('modal-content');
@@ -114,25 +113,30 @@ function checkOnlineMode() {
         });
         peer.on('connection', function (conn) {
             connection = conn;
-            connection.on('open', function () {
-                connection.on('data', function (index) {
-                    changeTurn();
-                    occupyCell(uses[index]);
-                });
-            });
+            onConnectionOpen()
         });
         showOnlineControls();
     } else {
         hideOnlineControls();
     }
 }
-function onConnection(event) {
-    friendID = input.value;
-    connection = peer.connect(friendID);
+function onConnectionOpen() {
     connection.on('open', function () {
-        connection.on('data', function (data) {
+        connection.on('data', function (obj) {
+            isXturn = obj.isXturn
+
+            uses.filter(use => !isSvgFilled(use)).forEach(use => setSvgLocked(use, false))
+
+            occupyCell(uses[obj.index]);
+            changeTurn();
         });
     });
+}
+function onConnection(event) {
+    friendID = inputFrndID.value;
+    connection = peer.connect(friendID);
+    onConnectionOpen()
+
 }
 function switchTheme() {
     const root = document.documentElement;
@@ -199,8 +203,8 @@ function makeOnlinePlayerMove(event) {
     makePlayerMove(event);
     const cell = event.currentTarget;
     const index = cells.indexOf(cell);
-    connection.send(index);
-
+    connection.send({ isXturn: isXturn, index: index });
+    uses.forEach(use => setSvgLocked(use, true))
 }
 function makePlayerMove(event) {
     const svg = event.currentTarget;
@@ -279,8 +283,8 @@ function makeHardBotMove() {
 function checkWinner() {
     for (let i = 0; i < 9; i += 3) {
         const isRowSet = uses[i + 1].getAttribute('href') &&
-        uses[i].getAttribute('href') === uses[i + 1].getAttribute('href') &&
-        uses[i + 1].getAttribute('href') === uses[i + 2].getAttribute('href');
+            uses[i].getAttribute('href') === uses[i + 1].getAttribute('href') &&
+            uses[i + 1].getAttribute('href') === uses[i + 2].getAttribute('href');
         if (isRowSet) {
             const cellBoundingClientRect = uses[i].parentNode.getBoundingClientRect();
             const top = cellBoundingClientRect.top + cellBoundingClientRect.height / 2;
@@ -289,12 +293,12 @@ function checkWinner() {
             announce("Winner " + (!isXturn ? 'X' : 'O') + "!");
             return;
         }
-        
+
     }
     for (let i = 0; i < 3; i++) {
         const isColumnSet = uses[i + 3].getAttribute('href') &&
-        uses[i].getAttribute('href') === uses[i + 3].getAttribute('href') &&
-        uses[i + 3].getAttribute('href') === uses[i + 6].getAttribute('href');
+            uses[i].getAttribute('href') === uses[i + 3].getAttribute('href') &&
+            uses[i + 3].getAttribute('href') === uses[i + 6].getAttribute('href');
         if (isColumnSet) {
             const cellBoundingClientRect = uses[i].parentNode.getBoundingClientRect();
             const top = cellBoundingClientRect.top;
@@ -304,11 +308,11 @@ function checkWinner() {
             return;
         }
     }
-    
+
     if (!uses[4].getAttribute('href')) { return; }
-    
+
     if (uses[2].getAttribute('href') === uses[4].getAttribute('href') &&
-    uses[4].getAttribute('href') === uses[6].getAttribute('href')) {
+        uses[4].getAttribute('href') === uses[6].getAttribute('href')) {
         const top = uses[2].parentNode.getBoundingClientRect().top;
         const left = uses[6].parentNode.getBoundingClientRect().left;
         strikethrough('100%', 0, 0, '100%', top, left);
@@ -361,7 +365,12 @@ function hideOnlineControls() {
 function setSvgLocked(use, locked) {
     use.locked = locked;
 }
-
+function setSvgFilled(use, filled) {
+    use.filled = filled
+}
+function isSvgFilled(use) {
+    return use.filled
+}
 function isSvgLocked(use) {
     return use.locked;
 }
@@ -389,6 +398,7 @@ function animateSvg(element, duration, strokeDashLength = 1000) {
 function occupyCell(use) {
     drawSvg(use);
     animateSvg(use);
+    setSvgFilled(use, true)
 }
 
 function strikethrough(x1, y1, x2, y2, top, left, height, width) {
@@ -432,6 +442,7 @@ function reset() {
         const cell = cells[index];
         const use = cell.firstElementChild;
         finished = false;
+        setSvgFilled(use, false)
         setSvgLocked(use, false);
         use.removeAttribute('href');
         use.removeAttribute('opacity');
