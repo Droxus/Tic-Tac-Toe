@@ -18,10 +18,8 @@ html {
 }
 
 html[data-theme='dark'] {
-  /* --bg-color-primary: rgb(30, 30, 40); */
-  /* --bg-color-primary: rgb(20, 20, 20); */
   --bg-color-primary: black;
-  --bg-color-secondary:  #121212;
+  --bg-color-secondary: #121212;
   --fg-color: white;
   --cross-stroke-color: #94b6ff;
   --circle-stroke-color: #ff9191;
@@ -48,9 +46,7 @@ html, body {
 }
 
 .grid-lines {
-  background-image:
-    linear-gradient(to right, var(--bg-color-primary) 1px, transparent 1px), 
-    linear-gradient(to bottom, var(--bg-color-primary) 1px, transparent 1px);
+  background-image: linear-gradient(to right, var(--bg-color-primary) 1px, transparent 1px), linear-gradient(to bottom, var(--bg-color-primary) 1px, transparent 1px);
   background-size: var(--bg-grid-lines-width) var(--bg-grid-lines-width);
 }
 
@@ -68,19 +64,8 @@ html, body {
   align-items: center;
 }
 
-.space-between {
-  display: flex;
-  justify-content: space-between;
-}
-
 #online-controls {
   margin: 0.75rem;
-}
-
-#switchTheme {
-  position: absolute;
-  top: 1%;
-  right: 1%;
 }
 
 #grid {
@@ -104,9 +89,7 @@ html, body {
   display: block;
   content: " ";
   background-size: var(--grid-lines-size) var(--grid-lines-size);
-  background-image: 
-    linear-gradient(to bottom, transparent var(--grid-cell-size-vp), var(--grid-lines-color) var(--grid-lines-width)),
-    linear-gradient(to right, transparent var(--grid-cell-size-vp), var(--grid-lines-color) var(--grid-lines-width));
+  background-image: linear-gradient(to bottom, transparent var(--grid-cell-size-vp), var(--grid-lines-color) var(--grid-lines-width)), linear-gradient(to right, transparent var(--grid-cell-size-vp), var(--grid-lines-color) var(--grid-lines-width));
   background-position: top left;
   animation: gridWipe 1s linear;
 }
@@ -144,7 +127,19 @@ html, body {
   padding: var(--result-modal-content-padding);
 }
 
-#modal .center {
+#modal>.center {
   width: 100%;
   height: 100%;
+}
+
+header {
+  margin: 0.75rem;
+}
+
+header>* {
+  margin: 0 0.5rem;
+}
+
+body.center {
+  justify-content: space-between;
 }

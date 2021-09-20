@@ -15,13 +15,14 @@ const inputFrndID = document.getElementById('friendId');
 const inputMyID = document.getElementById('myID');
 const buttonSwitchTheme = document.getElementById('switchTheme');
 const MODE = {
-    BOT_HARD: 'Insane bot',
     BOT_EASY: 'Easy bot',
-    PVP_ONLINE: 'Online PvP',
+    BOT_HARD: 'Insane bot',
     PVP_OFFLINE: 'Local PvP',
+    PVP_ONLINE: 'Online PvP',
 };
 const modal = document.getElementById('modal');
-const modalContent = document.getElementById('modal-content');
+const modalText = document.getElementById('modal-text');
+const modalOkButton = document.getElementById('modal-ok');
 const onlineControlsPanel = document.getElementById('online-controls');
 
 // ========================= Setup =========================
@@ -31,14 +32,12 @@ for (const mode in MODE) {
     select.appendChild(option);
 }
 
-window.onclick = onWindowClick;
-window.onload = onWindowLoad;
-
 select.addEventListener('input', onSelect);
 buttonConnect.addEventListener('click', onConnection);
 buttonSwitchTheme.addEventListener('click', switchTheme);
 buttonPressToCopyID.addEventListener('click', copyID);
 buttonPressToPlayAgain.addEventListener('click', playAgain);
+modalOkButton.addEventListener('click', playAgain);
 buttonPressToPasteID.addEventListener('click', pasteID);
 
 for (let index = 0; index < cells.length; index++) {
@@ -87,13 +86,6 @@ function onClick(event) {
     makeMove(event);
 }
 
-function onWindowClick(event) {
-    if (Array.from(modal.children).includes(event.target)) { hideModal(); }
-}
-
-function onWindowLoad(event) {
-    // TODO check user's prefered color theme and reflect it on the page
-}
 // =========================================================
 
 // ========================= Moves =========================
@@ -140,9 +132,9 @@ function onConnection(event) {
 }
 function switchTheme() {
     const root = document.documentElement;
-    const isDarkModeEnabled = root.hasAttribute('data-theme');
+    const isDarkModeEnabled = root.getAttribute('data-theme') === 'dark';
     if (isDarkModeEnabled) {
-        root.removeAttribute('data-theme');
+        root.setAttribute('data-theme', 'light');
         buttonSwitchTheme.innerText = 'Dark Theme';
     } else {
         root.setAttribute('data-theme', 'dark');
@@ -151,6 +143,9 @@ function switchTheme() {
 }
 function playAgain() {
     reset();
+    checkBotTurn();
+    checkOnlineMode();
+    hideModal();
 }
 function pasteID() {
     navigator.clipboard.readText().then(function (clipText) {
@@ -335,16 +330,10 @@ function checkWinner() {
 function announce(announcement) {
     finish();
     showModal(announcement);
-    setTimeout(() => {
-        reset();
-        checkBotTurn();
-        checkOnlineMode();
-        hideModal();
-    }, 2000);
 }
 
 function showModal(text) {
-    modalContent.innerText = text;
+    modalText.innerText = text;
     modal.style.display = 'block';
 }
 
@@ -428,9 +417,6 @@ function strikethrough(x1, y1, x2, y2, top, left, height, width) {
     animateSvg(line, 1000, lineLength);
 }
 // =========================================================
-function copy(someString) {
-
-}
 
 function reset() {
     isXturn = true;
