@@ -136,20 +136,28 @@ html, body {
   height: 100%;
 }
 
-header {
+header, footer {
   margin: 0.75rem;
 }
 
-header>* {
+header>*, footer>* {
   margin: 0 0.5rem;
+  font-size: 2rem;
 }
 
 body.center {
   justify-content: space-between;
 }
+
 #restart {
-fill: var(--restart-button-color);
+  fill: var(--restart-button-color);
 }
+
 #bttnSwitchTheme {
-fill: var(--switch-button-theme);
+  fill: var(--switch-button-theme);
+}
+
+header.center-horizontally {
+  justify-content: space-between;
+  width: 100%;
 }
