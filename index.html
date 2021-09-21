@@ -11,9 +11,8 @@
 
 <body class="center grid-lines">
     <header class="center-horizontally">
-        <button id="playAgain" type="button" style="border: 0; background-color: transparent;">
-            <svg id="restart" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="75" height="75"
-                viewBox="0 0 24 24">
+        <button id="playAgain" type="button" class="svg-icon-button">
+            <svg id="restart" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 24 24">
                 <path
                     d="M 2 2 L 4.9414062 4.9414062 C 3.1620561 6.7129386 2 9.209162 2 12 C 2 17.533333 6.4666667 22 12 22 C 17.533333 22 22 17.533333 22 12 C 22 6.4666667 17.533333 2 12 2 L 12 4 C 16.466667 4 20 7.5333333 20 12 C 20 16.466667 16.466667 20 12 20 C 7.5333333 20 4 16.466667 4 12 C 4 9.7594337 4.9364614 7.7627686 6.3535156 6.3535156 L 9 9 L 9 2 L 2 2 z">
                 </path>
@@ -23,10 +22,8 @@
             <label for="gameMode">Mode:</label>
             <select name="gameMode"></select>
         </div>
-        <button id="switchTheme" type="button" style="border: 0; background-color: transparent;">
-            <svg version="1.1" id="bttnSwitchTheme" xmlns="http://www.w3.org/2000/svg"
-                xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="75" height="75"
-                viewBox="0 0 417.075 417.075" style="enable-background:new 0 0 417.075 417.075;" xml:space="preserve">
+        <button id="switchTheme" type="button" class="svg-icon-button">
+            <svg id="bttnSwitchTheme" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 417.075 417.075">
                 <g>
                     <path d="M346.717,131.279C346.717,58.89,284.731,0,208.538,0S70.358,58.891,70.358,131.279c0,50.467,19.548,79.123,38.464,106.849
 			c15.547,22.779,31.605,46.33,33,77.959H275.34c1.402-31.604,17.43-55.146,32.961-77.938
@@ -84,12 +81,16 @@
         </div>
     </main>
     <footer class="center-horizontally">
-        <button type="button">
-            X
+        <button type="button" class="svg-icon-button">
+            <svg>
+                <use href="#cross"></use>
+            </svg>
         </button>
         <p>Turn</p>
-        <button type="button">
-            O
+        <button type="button" class="svg-icon-button">
+            <svg>
+                <use href="#circle"></use>
+            </svg>
         </button>
     </footer>
     <svg id="strikethrough" style="display: none;position: absolute;"></svg>
