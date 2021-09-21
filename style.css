@@ -15,6 +15,8 @@ html {
   --grid-lines-size: calc(var(--grid-cell-size-vp) + var(--grid-lines-width));
   --result-modal-bg-blur-radius: 4px;
   --result-modal-content-padding: 1vmin;
+  --restart-button-color: red;
+  --switch-button-theme: rgb(48, 48, 53);
 }
 
 html[data-theme='dark'] {
@@ -26,6 +28,8 @@ html[data-theme='dark'] {
   --grid-lines-color: rgb(202, 169, 62);
   --result-modal-bg-color: rgba(58, 58, 58, 0.5);
   --result-modal-content-bg-color: black;
+  --restart-button-color: rgb(202, 169, 62);
+  --switch-button-theme: rgb(202, 169, 62);
 }
 
 html, body {
@@ -142,4 +146,10 @@ header>* {
 
 body.center {
   justify-content: space-between;
+}
+#restart {
+fill: var(--restart-button-color);
+}
+#bttnSwitchTheme {
+fill: var(--switch-button-theme);
 }

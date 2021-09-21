@@ -135,10 +135,8 @@ function switchTheme() {
     const isDarkModeEnabled = root.getAttribute('data-theme') === 'dark';
     if (isDarkModeEnabled) {
         root.setAttribute('data-theme', 'light');
-        buttonSwitchTheme.innerText = 'Dark Theme';
     } else {
         root.setAttribute('data-theme', 'dark');
-        buttonSwitchTheme.innerText = 'Light Theme';
     }
 }
 function playAgain() {
