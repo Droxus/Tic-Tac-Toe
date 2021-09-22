@@ -51,6 +51,12 @@
     </section>
     <main class="center">
         <div id="grid">
+            <svg id="lines">
+                <line x1="33%" y1="0" x2="33%" y2="100%"/>
+                <line x1="67%" y1="0" x2="67%" y2="100%"/>
+                <line x1="0" y1="33%" x2="100%" y2="33%"/>
+                <line x1="0" y1="67%" x2="100%" y2="67%"/>
+            </svg>
             <svg class="cell">
                 <use></use>
             </svg>
@@ -93,7 +99,7 @@
             </svg>
         </button>
     </footer>
-    <svg id="strikethrough" style="display: none;position: absolute;"></svg>
+    <svg id="strikethrough" style="display: none;position: absolute;z-index: 1;"></svg>
     <svg style="display: none;">
         <defs>
             <g id="cross">
