@@ -24,6 +24,8 @@ const modal = document.getElementById('modal');
 const modalText = document.getElementById('modal-text');
 const modalOkButton = document.getElementById('modal-ok');
 const onlineControlsPanel = document.getElementById('online-controls');
+const gridLinesSvg = document.getElementById('lines');
+const buttonPressToPlayAgainSvg = document.getElementById('restart');
 
 // ========================= Setup =========================
 for (const mode in MODE) {
@@ -39,6 +41,7 @@ buttonPressToCopyID.addEventListener('click', copyID);
 buttonPressToPlayAgain.addEventListener('click', playAgain);
 modalOkButton.addEventListener('click', playAgain);
 buttonPressToPasteID.addEventListener('click', pasteID);
+buttonPressToPlayAgainSvg.addEventListener('transitionend', onPlayAgainTransitionEnd);
 
 for (let index = 0; index < cells.length; index++) {
     const cell = cells[index];
@@ -50,10 +53,12 @@ for (let index = 0; index < cells.length; index++) {
 reset();
 checkBotTurn();
 checkOnlineMode();
+animateSvg(gridLinesSvg);
 // =========================================================
 
 // ==================== Event Listeners ====================
 function onSelect(event) {
+    if (fillCellsCounter > 0) { animateSvg(gridLinesSvg); }
     reset();
     checkBotTurn();
     checkOnlineMode();
@@ -86,6 +91,10 @@ function onClick(event) {
     makeMove(event);
 }
 
+function onPlayAgainTransitionEnd(event) {
+    buttonPressToPlayAgainSvg.style.transition = '';
+    buttonPressToPlayAgainSvg.style.transform = '';
+}
 // =========================================================
 
 // ========================= Moves =========================
@@ -139,7 +148,13 @@ function switchTheme() {
         root.setAttribute('data-theme', 'dark');
     }
 }
+function animatePlayAgainSvg() {
+    buttonPressToPlayAgainSvg.style.transition = 'transform 1s';
+    buttonPressToPlayAgainSvg.style.transform = 'rotate(360deg)';
+}
 function playAgain() {
+    animatePlayAgainSvg();
+    if (fillCellsCounter > 0) { animateSvg(gridLinesSvg); }
     reset();
     checkBotTurn();
     checkOnlineMode();
