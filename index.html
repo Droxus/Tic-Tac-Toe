@@ -18,9 +18,11 @@
                 </path>
             </svg>
         </button>
+        
         <div>
-            <label for="gameMode">Mode:</label>
-            <select name="gameMode"></select>
+            <!-- <label for="gameMode">Mode:</label> -->
+            <button id="switchMode">switch MODE</button>
+            <!-- <select name="gameMode"></select> -->
         </div>
         <button id="switchTheme" type="button" class="svg-icon-button">
             <svg id="bttnSwitchTheme" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 417.075 417.075">
@@ -109,6 +111,17 @@
             <circle id="circle" cx="50%" cy="50%" r="40%" fill="transparent" stroke-width="5%" />
         </defs>
     </svg>
+    
+    <div id="modal1" style="display: none;">
+        <div class="center">
+            <div class="center">
+                <button id="buttonEasyBot" class="switchModebuttons"><h2>Easy Bot</h2></button>
+                <button id="buttonInsaneBot" class="switchModebuttons"><h2>Insane Bot</h2></button>
+                <button id="buttonLocalPvP" class="switchModebuttons"><h2>Local PvP</h2></button>
+                <button id="buttonOnlinePvP" class="switchModebuttons"><h2>Online PvP</h2></button>
+            </div>
+        </div>
+    </div>
     <div id="modal" style="display: none;">
         <div class="center">
             <div id="modal-content" class="center">

@@ -14,6 +14,12 @@ const buttonPressToPasteID = document.getElementById('pasteID');
 const inputFrndID = document.getElementById('friendId');
 const inputMyID = document.getElementById('myID');
 const buttonSwitchTheme = document.getElementById('switchTheme');
+const buttonSwitchMode = document.getElementById('switchMode')
+const modal1 = document.getElementById('modal1')
+const buttonEasyBot = document.getElementById('buttonEasyBot')
+const buttonInsaneBot = document.getElementById('buttonInsaneBot')
+const buttonLocalPvP = document.getElementById('buttonLocalPvP')
+const buttonOnlinePvP = document.getElementById('buttonOnlinePvP')
 const MODE = {
     BOT_EASY: 'Easy bot',
     BOT_HARD: 'Insane bot',
@@ -28,13 +34,13 @@ const gridLinesSvg = document.getElementById('lines');
 const buttonPressToPlayAgainSvg = document.getElementById('restart');
 
 // ========================= Setup =========================
-for (const mode in MODE) {
-    const option = document.createElement('option');
-    option.innerText = option.value = MODE[mode];
-    select.appendChild(option);
-}
+// for (const mode in MODE) {
+//     const option = document.createElement('option');
+//     option.innerText = option.value = MODE[mode];
+//     select.appendChild(option);
+// }
 
-select.addEventListener('input', onSelect);
+// select.addEventListener('input', onSelect);
 buttonConnect.addEventListener('click', onConnection);
 buttonSwitchTheme.addEventListener('click', switchTheme);
 buttonPressToCopyID.addEventListener('click', copyID);
@@ -42,6 +48,12 @@ buttonPressToPlayAgain.addEventListener('click', playAgain);
 modalOkButton.addEventListener('click', playAgain);
 buttonPressToPasteID.addEventListener('click', pasteID);
 buttonPressToPlayAgainSvg.addEventListener('transitionend', onPlayAgainTransitionEnd);
+buttonSwitchMode.addEventListener('click', onSwitchMode)
+buttonEasyBot.addEventListener('click', onEasyBot)
+buttonInsaneBot.addEventListener('click', onInsaneBot)
+buttonLocalPvP.addEventListener('click', onLocalPvP)
+buttonOnlinePvP.addEventListener('click', onOnlinePvP)
+
 
 for (let index = 0; index < cells.length; index++) {
     const cell = cells[index];
@@ -57,12 +69,37 @@ animateSvg(gridLinesSvg);
 // =========================================================
 
 // ==================== Event Listeners ====================
-function onSelect(event) {
+// function onSelect(event) {
+//     if (fillCellsCounter > 0) { animateSvg(gridLinesSvg); }
+//     reset();
+//     checkBotTurn();
+//     checkOnlineMode();
+// }
+function onModeSelect(event) {
+    modal1.style.display = 'none'
     if (fillCellsCounter > 0) { animateSvg(gridLinesSvg); }
     reset();
     checkBotTurn();
     checkOnlineMode();
+    makeMove(event)
 }
+function onEasyBot(event) {
+    gameMode = 'Easy bot'
+    onModeSelect(event)
+}
+function onInsaneBot(event) {
+    gameMode = 'Insane bot'
+    onModeSelect(event)
+}
+function onLocalPvP(event) {
+    gameMode = 'Local PvP'
+    onModeSelect(event)
+}
+function onOnlinePvP(event) {
+    gameMode = 'Online PvP'
+    onModeSelect(event)
+}
+
 
 function onEnter(event) {
     const svg = event.currentTarget;
@@ -89,6 +126,9 @@ function onClick(event) {
     const use = svg.firstElementChild;
     if (isSvgLocked(use)) { return; }
     makeMove(event);
+}
+function onSwitchMode(){
+    modal1.style.display = 'block'
 }
 
 function onPlayAgainTransitionEnd(event) {
@@ -434,7 +474,7 @@ function strikethrough(x1, y1, x2, y2, top, left, height, width) {
 function reset() {
     isXturn = true;
     fillCellsCounter = 0;
-    gameMode = select.value;
+    // gameMode = select.value;
     isBotTurn = false;
     svgStrikethrough.style.display = 'none';
     for (let index = 0; index < cells.length; index++) {
