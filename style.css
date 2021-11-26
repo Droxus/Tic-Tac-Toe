@@ -113,17 +113,8 @@ html, body {
   height: var(--grid-cell-size);
   width: var(--grid-cell-size);
 }
-#modal1 {
-  position: fixed;
-  z-index: 10;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: var(--result-modal-bg-color);
-  backdrop-filter: blur(var(--result-modal-bg-blur-radius));
-}
-#modal {
+
+.modal {
   position: fixed;
   z-index: 10;
   left: 0;
