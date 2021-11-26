@@ -15,7 +15,7 @@ const inputFrndID = document.getElementById('friendId');
 const inputMyID = document.getElementById('myID');
 const buttonSwitchTheme = document.getElementById('switchTheme');
 const buttonSwitchMode = document.getElementById('switchMode')
-const modal1 = document.getElementById('modal1')
+const divSwitchModeButtons = document.getElementById('divSwitchModeButtons')
 const buttonEasyBot = document.getElementById('buttonEasyBot')
 const buttonInsaneBot = document.getElementById('buttonInsaneBot')
 const buttonLocalPvP = document.getElementById('buttonLocalPvP')
@@ -76,7 +76,7 @@ animateSvg(gridLinesSvg);
 //     checkOnlineMode();
 // }
 function onModeSelect(event) {
-    modal1.style.display = 'none'
+    divSwitchModeButtons.style.display = 'none'
     if (fillCellsCounter > 0) { animateSvg(gridLinesSvg); }
     reset();
     checkBotTurn();
@@ -128,7 +128,7 @@ function onClick(event) {
     makeMove(event);
 }
 function onSwitchMode(){
-    modal1.style.display = 'block'
+    divSwitchModeButtons.style.display = 'block'
 }
 
 function onPlayAgainTransitionEnd(event) {
